@@ -55,3 +55,11 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Ignore large files used for example 2
+directors.list.gz
+directors.list.trimmed.gz
+ratings.list.gz
+ratings.list.trimmed.gz
+writers.list.gz
+writers.list.trimmed.gz
