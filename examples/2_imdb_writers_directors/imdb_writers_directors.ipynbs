@@ -1,0 +1,1672 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "\n",
+    "\"\"\" Read the writer for every movie in the IMDB,\n",
+    "    from a trimmed CSV version created in the last notebook.\n",
+    "\"\"\"\n",
+    "\n",
+    "writers = pd.read_csv('writers.list.trimmed.gz', compression='gzip', header=0, sep='\\t', encoding='ISO-8859-1')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>WRITER</th>\n",
+       "      <th>MOVIE_TITLE</th>\n",
+       "      <th>YEAR</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>390988</th>\n",
+       "      <td>Herbert, Frank (I)</td>\n",
+       "      <td>Dune</td>\n",
+       "      <td>1984</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>390989</th>\n",
+       "      <td>Herbert, Frank (I)</td>\n",
+       "      <td>Dune</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>554417</th>\n",
+       "      <td>Lynch, David (I)</td>\n",
+       "      <td>Dune</td>\n",
+       "      <td>1984</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                    WRITER MOVIE_TITLE  YEAR\n",
+       "390988  Herbert, Frank (I)        Dune  1984\n",
+       "390989  Herbert, Frank (I)        Dune   NaN\n",
+       "554417    Lynch, David (I)        Dune  1984"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "\"\"\" Let's just open the data up and take a peak. \"\"\"\n",
+    "\n",
+    "writers[writers['MOVIE_TITLE'] == \"Dune\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "1024178\n",
+      "406417\n",
+      "508262\n",
+      "135\n"
+     ]
+    }
+   ],
+   "source": [
+    "\"\"\" How much data do we have? \"\"\"\n",
+    "print(len(writers))\n",
+    "print(len(writers['WRITER'].unique()))\n",
+    "print(len(writers['MOVIE_TITLE'].unique()))\n",
+    "print(len(writers['YEAR'].unique()))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0\n",
+      "0\n",
+      "30528\n"
+     ]
+    }
+   ],
+   "source": [
+    "\"\"\" How much broken data do we have? \"\"\"\n",
+    "\n",
+    "print(len(writers[writers['WRITER'].isnull()]))\n",
+    "print(len(writers[writers['MOVIE_TITLE'].isnull()]))\n",
+    "print(len(writers[writers['YEAR'].isnull()]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "961450\n"
+     ]
+    }
+   ],
+   "source": [
+    "\"\"\" The above Frank Herbert example makes it look like we have some duplicates,\n",
+    "    that are totally artificial because of NaN years.\n",
+    "    It would be nice to remove these.\n",
+    "\"\"\"\n",
+    "# Remove all duplicate rows from the dataset\n",
+    "writers = writers.drop_duplicates()\n",
+    "\n",
+    "print(len(writers))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "\n",
+    "ratings = pd.read_csv('ratings.list.trimmed.gz', compression='gzip',\n",
+    "                       header=0, sep='\\t', encoding='ISO-8859-1',low_memory=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>VOTES</th>\n",
+       "      <th>RANK</th>\n",
+       "      <th>MOVIE_TITLE</th>\n",
+       "      <th>YEAR</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>218798</th>\n",
+       "      <td>802786</td>\n",
+       "      <td>8.7</td>\n",
+       "      <td>Star Wars</td>\n",
+       "      <td>1977</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>218799</th>\n",
+       "      <td>328</td>\n",
+       "      <td>7.8</td>\n",
+       "      <td>Star Wars</td>\n",
+       "      <td>1983</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>218800</th>\n",
+       "      <td>126</td>\n",
+       "      <td>6.4</td>\n",
+       "      <td>Star Wars</td>\n",
+       "      <td>1988</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>218801</th>\n",
+       "      <td>5</td>\n",
+       "      <td>8.4</td>\n",
+       "      <td>Star Wars</td>\n",
+       "      <td>1991</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         VOTES  RANK MOVIE_TITLE  YEAR\n",
+       "218798  802786   8.7   Star Wars  1977\n",
+       "218799     328   7.8   Star Wars  1983\n",
+       "218800     126   6.4   Star Wars  1988\n",
+       "218801       5   8.4   Star Wars  1991"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ratings[ratings['MOVIE_TITLE'] == 'Star Wars']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "287119\n",
+      "256777\n",
+      "287119\n",
+      "256777\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(len(ratings))\n",
+    "print(len(ratings['MOVIE_TITLE'].unique()))\n",
+    "ratings.drop_duplicates()\n",
+    "print(len(ratings))\n",
+    "print(len(ratings['MOVIE_TITLE'].unique()))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "def ratings_by_person(people, ratings):\n",
+    "    return pd.merge(right=people, left=ratings, how='inner', on=['MOVIE_TITLE', 'YEAR'])\n",
+    "\n",
+    "\n",
+    "rated_writers = ratings_by_person(writers, ratings)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "22318\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>VOTES</th>\n",
+       "      <th>RANK</th>\n",
+       "      <th>MOVIE_TITLE</th>\n",
+       "      <th>YEAR</th>\n",
+       "      <th>WRITER</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>144607</th>\n",
+       "      <td>23322</td>\n",
+       "      <td>9.5</td>\n",
+       "      <td>Hababam sinifi</td>\n",
+       "      <td>1975</td>\n",
+       "      <td>Bugay, Umur</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>144608</th>\n",
+       "      <td>23322</td>\n",
+       "      <td>9.5</td>\n",
+       "      <td>Hababam sinifi</td>\n",
+       "      <td>1975</td>\n",
+       "      <td>Ilgaz, Rifat</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>56425</th>\n",
+       "      <td>34420</td>\n",
+       "      <td>9.3</td>\n",
+       "      <td>CM101MMXI Fundamentals</td>\n",
+       "      <td>2013</td>\n",
+       "      <td>Yilmaz, Cem</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>298784</th>\n",
+       "      <td>7981</td>\n",
+       "      <td>9.2</td>\n",
+       "      <td>RangiTaranga</td>\n",
+       "      <td>2015</td>\n",
+       "      <td>Bhandari, Anup</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>406567</th>\n",
+       "      <td>13132</td>\n",
+       "      <td>9.1</td>\n",
+       "      <td>Tosun Pasa</td>\n",
+       "      <td>1976</td>\n",
+       "      <td>Hikmet, Nazim</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "        VOTES  RANK             MOVIE_TITLE  YEAR          WRITER\n",
+       "144607  23322   9.5          Hababam sinifi  1975     Bugay, Umur\n",
+       "144608  23322   9.5          Hababam sinifi  1975    Ilgaz, Rifat\n",
+       "56425   34420   9.3  CM101MMXI Fundamentals  2013     Yilmaz, Cem\n",
+       "298784   7981   9.2            RangiTaranga  2015  Bhandari, Anup\n",
+       "406567  13132   9.1              Tosun Pasa  1976   Hikmet, Nazim"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "writers_over5k = rated_writers[rated_writers['VOTES'] > 5000]\n",
+    "\n",
+    "writers_over5k = writers_over5k.sort(['RANK'], ascending=0)\n",
+    "\n",
+    "print(len(writers_over5k))\n",
+    "writers_over5k[:5]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "9825\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>VOTES</th>\n",
+       "      <th>RANK</th>\n",
+       "      <th>MOVIE_TITLE</th>\n",
+       "      <th>YEAR</th>\n",
+       "      <th>WRITER</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>56425</th>\n",
+       "      <td>34420</td>\n",
+       "      <td>9.3</td>\n",
+       "      <td>CM101MMXI Fundamentals</td>\n",
+       "      <td>2013</td>\n",
+       "      <td>Yilmaz, Cem</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>363381</th>\n",
+       "      <td>1533681</td>\n",
+       "      <td>9.0</td>\n",
+       "      <td>The Dark Knight</td>\n",
+       "      <td>2008</td>\n",
+       "      <td>Kane, Bob (I)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>363383</th>\n",
+       "      <td>1533681</td>\n",
+       "      <td>9.0</td>\n",
+       "      <td>The Dark Knight</td>\n",
+       "      <td>2008</td>\n",
+       "      <td>Nolan, Jonathan (I)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>370296</th>\n",
+       "      <td>722875</td>\n",
+       "      <td>9.0</td>\n",
+       "      <td>The Godfather: Part II</td>\n",
+       "      <td>1974</td>\n",
+       "      <td>Puzo, Mario</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>370295</th>\n",
+       "      <td>722875</td>\n",
+       "      <td>9.0</td>\n",
+       "      <td>The Godfather: Part II</td>\n",
+       "      <td>1974</td>\n",
+       "      <td>Coppola, Francis Ford</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          VOTES  RANK             MOVIE_TITLE  YEAR                 WRITER\n",
+       "56425     34420   9.3  CM101MMXI Fundamentals  2013            Yilmaz, Cem\n",
+       "363381  1533681   9.0         The Dark Knight  2008          Kane, Bob (I)\n",
+       "363383  1533681   9.0         The Dark Knight  2008    Nolan, Jonathan (I)\n",
+       "370296   722875   9.0  The Godfather: Part II  1974            Puzo, Mario\n",
+       "370295   722875   9.0  The Godfather: Part II  1974  Coppola, Francis Ford"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "writers_over25k = rated_writers[rated_writers['VOTES'] > 25000]\n",
+    "\n",
+    "writers_over25k = writers_over25k.sort(['RANK'], ascending=0)\n",
+    "\n",
+    "print(len(writers_over25k))\n",
+    "writers_over25k[:5]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "        VOTES  RANK      MOVIE_TITLE  YEAR       WRITER\n",
+      "144607  23322   9.5   Hababam sinifi  1975  Bugay, Umur\n",
+      "447316  11894   8.7   Çöpçüler Krali  1977  Bugay, Umur\n",
+      "184221   5745   8.5  Kapicilar Krali  1976  Bugay, Umur\n",
+      "144607    9.5\n",
+      "447316    8.7\n",
+      "184221    8.5\n",
+      "Name: RANK, dtype: float64\n",
+      "26.7\n",
+      "3\n"
+     ]
+    }
+   ],
+   "source": [
+    "# TODO: Group by writer and sort by most\n",
+    "print(writers_over5k[writers_over5k['WRITER'] == 'Bugay, Umur'])\n",
+    "print(writers_over5k[writers_over5k['WRITER'] == 'Bugay, Umur']['RANK'])\n",
+    "print(writers_over5k[writers_over5k['WRITER'] == 'Bugay, Umur']['RANK'].sum())\n",
+    "print(writers_over5k[writers_over5k['WRITER'] == 'Bugay, Umur']['RANK'].count())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "def weighted_rank(X, v, k):\n",
+    "    \"\"\"\n",
+    "    X = average for the movie (mean)\n",
+    "    v = number of movies\n",
+    "    k = minimum number movies required to be listed (currently 3)\n",
+    "    \"\"\"\n",
+    "    return (v / (v + k)) * X\n",
+    "\n",
+    "\n",
+    "def rank_people(people, job, min_num):\n",
+    "    ranks = []\n",
+    "    unique_people = people[job].unique()\n",
+    "    for person in unique_people:\n",
+    "        this_person = people[people[job] == person]\n",
+    "        new_rank = {}\n",
+    "        new_rank[job] = person\n",
+    "        new_rank['COUNT'] = this_person['RANK'].count()\n",
+    "        new_rank['AVG'] = this_person['RANK'].sum() / new_rank['COUNT']\n",
+    "        new_rank['RANK'] = weighted_rank(new_rank['AVG'], new_rank['COUNT'], 3.0)\n",
+    "        ranks.append(new_rank)\n",
+    "\n",
+    "    ranks = pd.DataFrame(ranks)\n",
+    "    return ranks.sort(['RANK'], ascending=0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "           AVG  COUNT      RANK                    WRITER\n",
+      "53    8.000000     20  6.956522           Kurosawa, Akira\n",
+      "556   7.493103     29  6.790625            Hecht, Ben (I)\n",
+      "225   7.566667     24  6.725926             Wilder, Billy\n",
+      "419   8.040000     15  6.700000           Bergman, Ingmar\n",
+      "1077  7.079592     49  6.671154              Allen, Woody\n",
+      "131   7.856250     16  6.615789           Miyazaki, Hayao\n",
+      "528   7.147222     36  6.597436  Shakespeare, William (I)\n",
+      "474   7.712500     16  6.494737          Huston, John (I)\n",
+      "52    8.100000     12  6.480000              Oguni, Hideo\n",
+      "554   7.923077     13  6.437500              Buñuel, Luis\n"
+     ]
+    }
+   ],
+   "source": [
+    "over_5k = rank_people(writers_over5k, 'WRITER', 3.0)\n",
+    "\n",
+    "print(over_5k[:10])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "          AVG  COUNT      RANK                  WRITER\n",
+      "690  7.237931     29  6.559375            Allen, Woody\n",
+      "51   8.050000     12  6.440000         Miyazaki, Hayao\n",
+      "401  7.444444     18  6.380952             Coen, Ethan\n",
+      "399  7.444444     18  6.380952              Coen, Joel\n",
+      "97   7.753846     13  6.300000      Tarantino, Quentin\n",
+      "89   8.160000     10  6.276923        Kubrick, Stanley\n",
+      "798  6.884615     26  6.172414        Fleming, Ian (I)\n",
+      "17   7.478571     14  6.158824       Lucas, George (I)\n",
+      "5    8.200000      9  6.150000  Nolan, Christopher (I)\n",
+      "6    7.009524     21  6.133333       King, Stephen (I)\n"
+     ]
+    }
+   ],
+   "source": [
+    "over_25k = rank_people(writers_over25k, 'WRITER', 3.0)\n",
+    "\n",
+    "print(over_25k[:10])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "135\n",
+      "342\n"
+     ]
+    }
+   ],
+   "source": [
+    "\"\"\" This is just a really quick test to see how much difference the\n",
+    "    > 5k vs 25k votes cutoff makes for writers.\n",
+    "    The result is that it makes a big difference, on the order of\n",
+    "    about a third of the writers.\n",
+    "\"\"\"\n",
+    "\n",
+    "overlap100_5k_25k = set(over_5k['WRITER'][:100].unique()).union(set(over_25k['WRITER'][:100].unique()))\n",
+    "print(len(overlap100_5k_25k))\n",
+    "\n",
+    "overlap250_5k_25k = set(over_5k['WRITER'][:250].unique()).union(set(over_25k['WRITER'][:250].unique()))\n",
+    "print(len(overlap250_5k_25k))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>AVG</th>\n",
+       "      <th>COUNT</th>\n",
+       "      <th>RANK</th>\n",
+       "      <th>WRITER</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>53</th>\n",
+       "      <td>8.000000</td>\n",
+       "      <td>20</td>\n",
+       "      <td>6.956522</td>\n",
+       "      <td>Kurosawa, Akira</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>556</th>\n",
+       "      <td>7.493103</td>\n",
+       "      <td>29</td>\n",
+       "      <td>6.790625</td>\n",
+       "      <td>Hecht, Ben (I)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>225</th>\n",
+       "      <td>7.566667</td>\n",
+       "      <td>24</td>\n",
+       "      <td>6.725926</td>\n",
+       "      <td>Wilder, Billy</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>419</th>\n",
+       "      <td>8.040000</td>\n",
+       "      <td>15</td>\n",
+       "      <td>6.700000</td>\n",
+       "      <td>Bergman, Ingmar</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1077</th>\n",
+       "      <td>7.079592</td>\n",
+       "      <td>49</td>\n",
+       "      <td>6.671154</td>\n",
+       "      <td>Allen, Woody</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>131</th>\n",
+       "      <td>7.856250</td>\n",
+       "      <td>16</td>\n",
+       "      <td>6.615789</td>\n",
+       "      <td>Miyazaki, Hayao</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>528</th>\n",
+       "      <td>7.147222</td>\n",
+       "      <td>36</td>\n",
+       "      <td>6.597436</td>\n",
+       "      <td>Shakespeare, William (I)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>474</th>\n",
+       "      <td>7.712500</td>\n",
+       "      <td>16</td>\n",
+       "      <td>6.494737</td>\n",
+       "      <td>Huston, John (I)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>52</th>\n",
+       "      <td>8.100000</td>\n",
+       "      <td>12</td>\n",
+       "      <td>6.480000</td>\n",
+       "      <td>Oguni, Hideo</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>554</th>\n",
+       "      <td>7.923077</td>\n",
+       "      <td>13</td>\n",
+       "      <td>6.437500</td>\n",
+       "      <td>Buñuel, Luis</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "           AVG  COUNT      RANK                    WRITER\n",
+       "53    8.000000     20  6.956522           Kurosawa, Akira\n",
+       "556   7.493103     29  6.790625            Hecht, Ben (I)\n",
+       "225   7.566667     24  6.725926             Wilder, Billy\n",
+       "419   8.040000     15  6.700000           Bergman, Ingmar\n",
+       "1077  7.079592     49  6.671154              Allen, Woody\n",
+       "131   7.856250     16  6.615789           Miyazaki, Hayao\n",
+       "528   7.147222     36  6.597436  Shakespeare, William (I)\n",
+       "474   7.712500     16  6.494737          Huston, John (I)\n",
+       "52    8.100000     12  6.480000              Oguni, Hideo\n",
+       "554   7.923077     13  6.437500              Buñuel, Luis"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "\"\"\" Based on the above comparison between the over 5k and over 25k\n",
+    "    writers overlap, I will use the 'over 5k' collection. The\n",
+    "    'over 25k' collection just seems unfairly biased toward\n",
+    "    really popular movies, and writers who wrote a lot of movies.\n",
+    "\"\"\"\n",
+    "\n",
+    "best_100 = over_5k[:100]\n",
+    "best_100[:10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "          MOVIE_TITLE  MY_RANK  YEAR\n",
+      "0          Ex Machina        8  2015\n",
+      "1          Iron Man 3        6  2013\n",
+      "2       A Close Shave        7  1995\n",
+      "3  The Wrong Trousers        7  1993\n",
+      "4          Roger & Me        4  1989\n",
+      "                                MOVIE_TITLE  MY_RANK  YEAR\n",
+      "572  Futurama: Where No Fan Has Gone Before       10  1999\n",
+      "640                   An Inconvenient Truth       10  2006\n",
+      "19                                   Primer       10  2004\n",
+      "689                       Life Is Beautiful       10  1997\n",
+      "686                            Delicatessen       10  1991\n"
+     ]
+    }
+   ],
+   "source": [
+    "\"\"\" Reading the CSV dump file from IMDB that\n",
+    "    represents the 700 movies I have rated.\n",
+    "\"\"\"\n",
+    "\n",
+    "# initial read of my movie ratings\n",
+    "my_ratings = pd.read_csv('my_ratings.csv', header=0, sep=',', encoding='ISO-8859-1',\n",
+    "                         usecols=['Title', 'You rated', 'Year'])\n",
+    "my_ratings.columns = ['MOVIE_TITLE', 'MY_RANK', 'YEAR']\n",
+    "print(my_ratings[:5])\n",
+    "\n",
+    "# here I select my favorite movies (ratings above 7)\n",
+    "my_favs = my_ratings[my_ratings['MY_RANK'] > 7].sort(['MY_RANK'], ascending=0)\n",
+    "print(my_favs[:5])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "97"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "my_fav_movies = my_favs['MOVIE_TITLE'].unique()\n",
+    "len(my_fav_movies)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "    MOVIE_TITLE  MY_RANK  YEAR  VOTES  RANK               WRITER\n",
+      "1  Delicatessen       10  1991  63231   7.7       Adrien, Gilles\n",
+      "2  Delicatessen       10  1991  63231   7.7           Caro, Marc\n",
+      "3  Delicatessen       10  1991  63231   7.7  Jeunet, Jean-Pierre\n",
+      "231\n"
+     ]
+    }
+   ],
+   "source": [
+    "my_fav_writers = ratings_by_person(writers_over5k, my_favs)\n",
+    "\n",
+    "print(my_fav_writers[my_fav_writers['MOVIE_TITLE'] == 'Delicatessen'])\n",
+    "print(len(my_fav_writers))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "my_top_writers = my_fav_writers[['WRITER', 'MY_RANK']].groupby('WRITER')\\\n",
+    "                               .agg(['count']).sort([('MY_RANK', 'count')], ascending=0)\n",
+    "my_top_writers = my_top_writers[my_top_writers[('MY_RANK', 'count')] > 1]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "30\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr>\n",
+       "      <th></th>\n",
+       "      <th>MY_RANK</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th></th>\n",
+       "      <th>count</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>WRITER</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Gilliam, Terry</th>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Coen, Joel</th>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Coen, Ethan</th>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Chapman, Graham (I)</th>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Walsh, Fran (I)</th>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Idle, Eric</th>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Kubrick, Stanley</th>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Jackson, Peter (I)</th>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Anderson, Wes (I)</th>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Palin, Michael</th>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Jones, Terry (I)</th>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Boyens, Philippa</th>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Cleese, John</th>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Tolkien, J.R.R.</th>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>O'Bannon, Dan (I)</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Fergus, Mark (I)</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Coppel, Alec</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Coppola, Francis Ford</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Hayes, John Michael</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Pegg, Simon</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Shusett, Ronald</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>King, Stephen (I)</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Anderson, Paul Thomas (I)</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Kelly, Richard (II)</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Brooks, Mel (I)</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Reynolds, David (I)</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Ostby, Hawk</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Puzo, Mario</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Cameron, James (I)</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Wright, Edgar</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                          MY_RANK\n",
+       "                            count\n",
+       "WRITER                           \n",
+       "Gilliam, Terry                  5\n",
+       "Coen, Joel                      4\n",
+       "Coen, Ethan                     4\n",
+       "Chapman, Graham (I)             3\n",
+       "Walsh, Fran (I)                 3\n",
+       "Idle, Eric                      3\n",
+       "Kubrick, Stanley                3\n",
+       "Jackson, Peter (I)              3\n",
+       "Anderson, Wes (I)               3\n",
+       "Palin, Michael                  3\n",
+       "Jones, Terry (I)                3\n",
+       "Boyens, Philippa                3\n",
+       "Cleese, John                    3\n",
+       "Tolkien, J.R.R.                 3\n",
+       "O'Bannon, Dan (I)               2\n",
+       "Fergus, Mark (I)                2\n",
+       "Coppel, Alec                    2\n",
+       "Coppola, Francis Ford           2\n",
+       "Hayes, John Michael             2\n",
+       "Pegg, Simon                     2\n",
+       "Shusett, Ronald                 2\n",
+       "King, Stephen (I)               2\n",
+       "Anderson, Paul Thomas (I)       2\n",
+       "Kelly, Richard (II)             2\n",
+       "Brooks, Mel (I)                 2\n",
+       "Reynolds, David (I)             2\n",
+       "Ostby, Hawk                     2\n",
+       "Puzo, Mario                     2\n",
+       "Cameron, James (I)              2\n",
+       "Wright, Edgar                   2"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "print(len(my_top_writers))\n",
+    "my_top_writers"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>DIRECTOR</th>\n",
+       "      <th>MOVIE_TITLE</th>\n",
+       "      <th>YEAR</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>411192</th>\n",
+       "      <td>Knoop, John (I)</td>\n",
+       "      <td>Dune</td>\n",
+       "      <td>1973</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>471676</th>\n",
+       "      <td>Lynch, David (I)</td>\n",
+       "      <td>Dune</td>\n",
+       "      <td>1984</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                DIRECTOR MOVIE_TITLE  YEAR\n",
+       "411192   Knoop, John (I)        Dune  1973\n",
+       "471676  Lynch, David (I)        Dune  1984"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "\"\"\" Read the writer for every movie in the IMDB,\n",
+    "    from a trimmed CSV version created in the last notebook.\n",
+    "\"\"\"\n",
+    "\n",
+    "directors = pd.read_csv('directors.list.trimmed.gz', compression='gzip', header=0, sep='\\t', encoding='ISO-8859-1')\n",
+    "\n",
+    "directors[directors['MOVIE_TITLE'] == \"Dune\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>DIRECTOR</th>\n",
+       "      <th>MOVIE_TITLE</th>\n",
+       "      <th>YEAR</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>&amp;Oumlzkul, Ahmet Salih</td>\n",
+       "      <td>Ii</td>\n",
+       "      <td>2013</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>'Abd Al-Hamid, Ja'far</td>\n",
+       "      <td>A Two Hour Delay</td>\n",
+       "      <td>2001</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>'Abd Al-Hamid, Ja'far</td>\n",
+       "      <td>Badgeless sur la Croisette</td>\n",
+       "      <td>2012</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                 DIRECTOR                 MOVIE_TITLE  YEAR\n",
+       "0  &Oumlzkul, Ahmet Salih                          Ii  2013\n",
+       "1   'Abd Al-Hamid, Ja'far            A Two Hour Delay  2001\n",
+       "2   'Abd Al-Hamid, Ja'far  Badgeless sur la Croisette  2012"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "directors[:3]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "866514\n",
+      "318588\n",
+      "644799\n",
+      "148\n"
+     ]
+    }
+   ],
+   "source": [
+    "\"\"\" How much data do we have? \"\"\"\n",
+    "print(len(directors))\n",
+    "print(len(directors['DIRECTOR'].unique()))\n",
+    "print(len(directors['MOVIE_TITLE'].unique()))\n",
+    "print(len(directors['YEAR'].unique()))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "Directors:\n",
+      "count    318588.000000\n",
+      "mean          2.719858\n",
+      "std           7.512609\n",
+      "min           1.000000\n",
+      "25%           1.000000\n",
+      "50%           1.000000\n",
+      "75%           2.000000\n",
+      "max         687.000000\n",
+      "dtype: float64\n",
+      "\n",
+      "Writers:\n",
+      "count    406417.000000\n",
+      "mean          2.365674\n",
+      "std           5.329415\n",
+      "min           1.000000\n",
+      "25%           1.000000\n",
+      "50%           1.000000\n",
+      "75%           2.000000\n",
+      "max         554.000000\n",
+      "dtype: float64\n"
+     ]
+    }
+   ],
+   "source": [
+    "\"\"\" Note above we have more movies and years of movies\n",
+    "    in IMDB with directors than writers, but we have\n",
+    "    fewer directors.\n",
+    "    This suggests that a single director will do more\n",
+    "    movies than a writer typically gets to do.\n",
+    "\n",
+    "    So, let's test that.\n",
+    "\"\"\"\n",
+    "director_stats = directors[['DIRECTOR']].stack().value_counts()\n",
+    "print('\\nDirectors:')\n",
+    "print(director_stats.describe())\n",
+    "\n",
+    "writer_stats = writers[['WRITER']].stack().value_counts()\n",
+    "print('\\nWriters:')\n",
+    "print(writer_stats.describe())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0\n",
+      "0\n",
+      "15324\n"
+     ]
+    }
+   ],
+   "source": [
+    "\"\"\" How much broken data do we have? \"\"\"\n",
+    "\n",
+    "print(len(directors[directors['DIRECTOR'].isnull()]))\n",
+    "print(len(directors[directors['MOVIE_TITLE'].isnull()]))\n",
+    "print(len(directors[directors['YEAR'].isnull()]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "866514\n",
+      "864726\n"
+     ]
+    }
+   ],
+   "source": [
+    "\"\"\" The above Frank Herbert example makes it look like we have some duplicates,\n",
+    "    that are totally artificial because of NaN years.\n",
+    "    It would be nice to remove these.\n",
+    "\"\"\"\n",
+    "# Remove all duplicate rows from the dataset\n",
+    "print(len(directors))\n",
+    "directors = directors.drop_duplicates()\n",
+    "print(len(directors))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "\"\"\" Now let's look at the directors compared to their IMDB ratings \"\"\"\n",
+    "\n",
+    "rated_directors = ratings_by_person(directors, ratings)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "10592\n",
+      "4411\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>VOTES</th>\n",
+       "      <th>RANK</th>\n",
+       "      <th>MOVIE_TITLE</th>\n",
+       "      <th>YEAR</th>\n",
+       "      <th>DIRECTOR</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>42658</th>\n",
+       "      <td>34420</td>\n",
+       "      <td>9.3</td>\n",
+       "      <td>CM101MMXI Fundamentals</td>\n",
+       "      <td>2013</td>\n",
+       "      <td>Dundar, Murat</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>281636</th>\n",
+       "      <td>1558149</td>\n",
+       "      <td>9.0</td>\n",
+       "      <td>The Shawshank Redemption</td>\n",
+       "      <td>1994</td>\n",
+       "      <td>Darabont, Frank</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>267445</th>\n",
+       "      <td>1066667</td>\n",
+       "      <td>9.0</td>\n",
+       "      <td>The Godfather</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Coppola, Francis Ford</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>262450</th>\n",
+       "      <td>1533681</td>\n",
+       "      <td>9.0</td>\n",
+       "      <td>The Dark Knight</td>\n",
+       "      <td>2008</td>\n",
+       "      <td>Nolan, Christopher (I)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>267450</th>\n",
+       "      <td>722875</td>\n",
+       "      <td>9.0</td>\n",
+       "      <td>The Godfather: Part II</td>\n",
+       "      <td>1974</td>\n",
+       "      <td>Coppola, Francis Ford</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          VOTES  RANK               MOVIE_TITLE  YEAR                DIRECTOR\n",
+       "42658     34420   9.3    CM101MMXI Fundamentals  2013           Dundar, Murat\n",
+       "281636  1558149   9.0  The Shawshank Redemption  1994         Darabont, Frank\n",
+       "267445  1066667   9.0             The Godfather  1972   Coppola, Francis Ford\n",
+       "262450  1533681   9.0           The Dark Knight  2008  Nolan, Christopher (I)\n",
+       "267450   722875   9.0    The Godfather: Part II  1974   Coppola, Francis Ford"
+      ]
+     },
+     "execution_count": 47,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "\"\"\" And let's take only the movies that have had more than\n",
+    "    some minimum number of votes.\n",
+    "\"\"\"\n",
+    "\n",
+    "directors_over5k = rated_directors[rated_directors['VOTES'] > 5000]\n",
+    "directors_over5k = directors_over5k.sort(['RANK'], ascending=0)\n",
+    "\n",
+    "print(len(directors_over5k))\n",
+    "directors_over5k[:5]\n",
+    "\n",
+    "directors_over25k = rated_directors[rated_directors['VOTES'] > 25000]\n",
+    "directors_over25k = directors_over25k.sort(['RANK'], ascending=0)\n",
+    "\n",
+    "print(len(directors_over25k))\n",
+    "directors_over25k[:5]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "dover_5k = rank_people(directors_over5k, 'DIRECTOR', 3.0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>AVG</th>\n",
+       "      <th>COUNT</th>\n",
+       "      <th>DIRECTOR</th>\n",
+       "      <th>RANK</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>81</th>\n",
+       "      <td>7.463158</td>\n",
+       "      <td>38</td>\n",
+       "      <td>Hitchcock, Alfred (I)</td>\n",
+       "      <td>6.917073</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>33</th>\n",
+       "      <td>8.187500</td>\n",
+       "      <td>16</td>\n",
+       "      <td>Kurosawa, Akira</td>\n",
+       "      <td>6.894737</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>34</th>\n",
+       "      <td>7.548148</td>\n",
+       "      <td>27</td>\n",
+       "      <td>Scorsese, Martin</td>\n",
+       "      <td>6.793333</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>205</th>\n",
+       "      <td>8.043750</td>\n",
+       "      <td>16</td>\n",
+       "      <td>Bergman, Ingmar</td>\n",
+       "      <td>6.773684</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>12</th>\n",
+       "      <td>7.441379</td>\n",
+       "      <td>29</td>\n",
+       "      <td>Spielberg, Steven</td>\n",
+       "      <td>6.743750</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>444</th>\n",
+       "      <td>7.126087</td>\n",
+       "      <td>46</td>\n",
+       "      <td>Allen, Woody</td>\n",
+       "      <td>6.689796</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>77</th>\n",
+       "      <td>7.788889</td>\n",
+       "      <td>18</td>\n",
+       "      <td>Wilder, Billy</td>\n",
+       "      <td>6.676190</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>158</th>\n",
+       "      <td>7.856250</td>\n",
+       "      <td>16</td>\n",
+       "      <td>Wyler, William</td>\n",
+       "      <td>6.615789</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>332</th>\n",
+       "      <td>7.617647</td>\n",
+       "      <td>17</td>\n",
+       "      <td>Hawks, Howard</td>\n",
+       "      <td>6.475000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>187</th>\n",
+       "      <td>7.033333</td>\n",
+       "      <td>33</td>\n",
+       "      <td>Eastwood, Clint</td>\n",
+       "      <td>6.447222</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          AVG  COUNT               DIRECTOR      RANK\n",
+       "81   7.463158     38  Hitchcock, Alfred (I)  6.917073\n",
+       "33   8.187500     16        Kurosawa, Akira  6.894737\n",
+       "34   7.548148     27       Scorsese, Martin  6.793333\n",
+       "205  8.043750     16        Bergman, Ingmar  6.773684\n",
+       "12   7.441379     29      Spielberg, Steven  6.743750\n",
+       "444  7.126087     46           Allen, Woody  6.689796\n",
+       "77   7.788889     18          Wilder, Billy  6.676190\n",
+       "158  7.856250     16         Wyler, William  6.615789\n",
+       "332  7.617647     17          Hawks, Howard  6.475000\n",
+       "187  7.033333     33        Eastwood, Clint  6.447222"
+      ]
+     },
+     "execution_count": 53,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "dover_5k[:10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "    MOVIE_TITLE  MY_RANK  YEAR  VOTES  RANK             DIRECTOR\n",
+      "2  Delicatessen       10  1991  63231   7.7  Jeunet, Jean-Pierre\n",
+      "3  Delicatessen       10  1991  63231   7.7           Caro, Marc\n",
+      "101\n"
+     ]
+    }
+   ],
+   "source": [
+    "\"\"\" Okay, now I want to go back and look at just my own ratings of movies\n",
+    "    And use those to find *my* favorite directors.\n",
+    "\"\"\"\n",
+    "\n",
+    "my_fav_directors = ratings_by_person(directors_over5k, my_favs)\n",
+    "\n",
+    "print(my_fav_directors[my_fav_directors['MOVIE_TITLE'] == 'Delicatessen'])\n",
+    "print(len(my_fav_directors))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "17\n",
+      "                          MY_RANK\n",
+      "                            count\n",
+      "DIRECTOR                         \n",
+      "Gilliam, Terry                  4\n",
+      "Hitchcock, Alfred (I)           4\n",
+      "Coen, Joel                      4\n",
+      "Coen, Ethan                     4\n",
+      "Jackson, Peter (I)              3\n",
+      "Spielberg, Steven               3\n",
+      "Anderson, Wes (I)               3\n",
+      "Scott, Ridley                   3\n",
+      "Kubrick, Stanley                3\n",
+      "Jones, Terry (I)                3\n",
+      "Forman, Milos                   2\n",
+      "Coppola, Francis Ford           2\n",
+      "Kelly, Richard (II)             2\n",
+      "Cameron, James (I)              2\n",
+      "Brooks, Mel (I)                 2\n",
+      "Wright, Edgar                   2\n",
+      "Anderson, Paul Thomas (I)       2\n"
+     ]
+    }
+   ],
+   "source": [
+    "my_top_directors = my_fav_directors[['DIRECTOR', 'MY_RANK']].groupby('DIRECTOR')\\\n",
+    "                               .agg(['count']).sort([('MY_RANK', 'count')], ascending=0)\n",
+    "my_top_directors = my_top_directors[my_top_directors[('MY_RANK', 'count')] > 1]\n",
+    "\n",
+    "print(len(my_top_directors))\n",
+    "print(my_top_directors)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.4.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}
