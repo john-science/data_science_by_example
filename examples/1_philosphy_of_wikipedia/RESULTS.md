@@ -8,9 +8,9 @@ I can not firmly attribute this idea to him, XKCD is just the first place I ran 
 
 This is the first example in thiis repository because it was so easy to solve: it only took two simple Python functions. The basic steps are:
 
-(1) I wrote two simple functions in an [iPython](http://ipython.org/) notebook.
-(2) The first function used [beautifulsoup](http://www.crummy.com/software/BeautifulSoup/) and [requests](http://docs.python-requests.org/en/latest/) to scrap a Wikipedia article to find the first link.
-(3) The second function just looped: following the links returned by the first function until you found Philosophy, or entered an infinite loop.
+1. I wrote two simple functions in an [iPython](http://ipython.org/) notebook.
+2. The first function used [beautifulsoup](http://www.crummy.com/software/BeautifulSoup/) and [requests](http://docs.python-requests.org/en/latest/) to scrap a Wikipedia article to find the first link.
+3. The second function just looped: following the links returned by the first function until you found Philosophy, or entered an infinite loop.
 
 Then I played around with the code, trying hundreds of examples at random.
 
