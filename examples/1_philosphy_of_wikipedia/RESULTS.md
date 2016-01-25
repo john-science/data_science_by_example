@@ -6,13 +6,11 @@ I can not firmly attribute this idea to him, XKCD is just the first place I ran 
 
 ## Method
 
-This is the first example in thiis repository because it was so easy to solve: it only took two simple Python functions. The basic steps are:
+This is the first example in this repository because it was so easy to solve: it only took two simple Python functions. Working in an [iPython](http://ipython.org/) notebook, there were three basic steps:
 
-1. I wrote two simple functions in an [iPython](http://ipython.org/) notebook.
-2. The first function used [beautifulsoup](http://www.crummy.com/software/BeautifulSoup/) and [requests](http://docs.python-requests.org/en/latest/) to scrap a Wikipedia article to find the first link.
-3. The second function just looped: following the links returned by the first function until you found Philosophy, or entered an infinite loop.
-
-Then I played around with the code, trying hundreds of examples at random.
+1. Write a function using [beautifulsoup](http://www.crummy.com/software/BeautifulSoup/) and [requests](http://docs.python-requests.org/en/latest/) to scrap a Wikipedia article to find the first link.
+2. Write a function the follows the links returned from the first function until you hit the Philosophy page, or entered an infinite loop.
+3. Play around with the second function, trying many, many options and looking for patterns.
 
 Full solution [here](philosophy_of_wikipedia.ipynb).
 
