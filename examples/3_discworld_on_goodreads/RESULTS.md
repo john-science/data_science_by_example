@@ -1,4 +1,4 @@
-# Parsing Goodreadsfor Information on the Discworld Series
+# Parsing Goodreads for Information on Discworld
 
 In case you aren't already familiar with it, [goodreads](https://www.goodreads.com/) does for books what [IMDB](https://www.imdb.com/) does for movies. It's a great site, with a lot of information to dig through.
 
