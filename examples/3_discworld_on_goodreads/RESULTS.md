@@ -6,7 +6,13 @@ This is a basic example of website parsing to get your data. To make it interest
 
 ## Method
 
-TODO
+The first step for this project, was to get the HTML for the `goodreads` page. I originally did this with a simple [requests]() pull:
+
+    requests.get('https://www.goodreads.com/series/40650-discworld')
+
+But, the `goodreads` site is free to reformat their webpages. So just in case, I have cached the result here:
+
+    TODO
 
 ## Results
 
