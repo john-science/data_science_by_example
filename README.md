@@ -7,4 +7,5 @@ This repository is just a collection of examples using different libraries and t
  * [2. Parsing IMDB for the Best Writers & Directors](examples/2_imdb_writers_directors/RESULTS.md) - **iPython, Pandas**
   * Everyone knows their favorite actors. But only movie buffs know who their favorite directors are. And no one seems to talk about their favorite movie writers. IMDB has a wealth of information available for download, let's take a look.
  * [3. Parsing GoodReads for the Discworld Series](examples/3_discworld_on_goodreads/RESULTS.md) - **iPython, BeautifulSoup, Pandas**
+ * [4. Classifying Irises](examples/4_classifying_irisses/RESULTS.md) - **iPython, scikit-learn**
   * Terry Pratchett's Discworld book series ended up with a massive 41 books. So where should you start reading? Luckily, the GoodReads website has a ton of user ratings information we can look at to decide.
