@@ -10,9 +10,16 @@ The first step for this project, was to get the HTML for the `goodreads` page. I
 
     requests.get('https://www.goodreads.com/series/40650-discworld')
 
-But, the `goodreads` site is free to reformat their webpages. So just in case, I have cached the result here:
+But, the `goodreads` site is free to reformat their webpages. So just in case, I have cached the result [here](goodreads_discworld.html).
 
-    TODO
+However you get the HTML for that webpage, the next steps are the same:
+
+* Use [Beautiful Soup](http://www.crummy.com/software/BeautifulSoup/) to parse the HTML as XML and get a set of data for each book: title, number of user ratings, average rating, publication year, number in series, and if it's part of a sub-series.
+* Load the book data into [pandas](http://pandas.pydata.org/) for analysis.
+* Use `pandas` to find the top ten books by average user rating and number of user ratings.
+* Use the `pandas` `groupby` method to determine which books in the series are part of a smaller sub-series of stories.
+* Use the `pandas` `groupby` method to determine which sub-series are most popular.
+* Use `pandas` to display a list of the books in the most popular three sub-series.
 
 ## Results
 
