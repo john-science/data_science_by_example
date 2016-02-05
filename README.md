@@ -6,6 +6,7 @@ This repository is just a collection of examples using different libraries and t
   * Randal Monroe, from XKCD, posited the theory that if you start on *any* page on Wikipedia and take the first link, you will eventually end up on the Philosophy page. Let's try it.
  * [2. Parsing IMDB for the Best Writers & Directors](examples/2_imdb_writers_directors/RESULTS.md) - **iPython, Pandas**
   * Everyone knows their favorite actors. But only movie buffs know who their favorite directors are. And no one seems to talk about their favorite movie writers. IMDB has a wealth of information available for download, let's take a look.
- * [3. Parsing GoodReads for the Discworld Series](examples/3_discworld_on_goodreads/RESULTS.md) - **iPython, BeautifulSoup, Pandas**
+ * [3. Parsing GoodReads for the Discworld Series](examples/3_discworld_on_goodreads/RESULTS.md) - **iPython,requests, BeautifulSoup, Pandas**
+  * The Discworld series is one of the longest series of books ever written, with 41 books. If you haven't read anything in Discworld before, where should you start?
  * [4. Classifying Irises](examples/4_classifying_irisses/RESULTS.md) - **iPython, scikit-learn**
-  * Terry Pratchett's Discworld book series ended up with a massive 41 books. So where should you start reading? Luckily, the GoodReads website has a ton of user ratings information we can look at to decide.
+  * Let's use a sample `scikit-learn` data set to learn about stochiast gradient descent classification.
