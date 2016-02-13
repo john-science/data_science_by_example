@@ -4,6 +4,8 @@ This is a classic [scikit-learn](http://scikit-learn.org/stable/index.html) exam
 
 ## Methods
 
+You will find the complete process in the iPython notebook [here](4_sgd.ipynb).
+
 * First, we load the iris data set that comes stock with scikit-learn: `from sklearn.datasets import load_iris`, `iris = load_iris()`.
 * Then we break the data 3:1 into trainging and testing data sets: `from sklearn.cross_validation import train_test_split` and `train_test_split(x, test_size=0.25)`,
 * Then we normalize the sepal measurments (independent variables) so they have an average of 0.0 and a standard deviation of 1.0.
