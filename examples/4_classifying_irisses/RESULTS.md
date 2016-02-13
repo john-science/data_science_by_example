@@ -10,4 +10,4 @@ TODO
 
 In the end, we choose only two variables to try and differentiate the three species of irises: sepal length and sepal width. Perhaps more variables would have given us better separation. As it stand, we defined the equation of three lines that separate one species from the other two. Though only one of these lines is particularly pleasing:
 
-![iris plot](sepal_measurments.png)
+![iris plot](sepal_measurements.png)
