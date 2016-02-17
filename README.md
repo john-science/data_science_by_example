@@ -10,3 +10,5 @@ This repository is just a collection of examples using different libraries and t
   * The Discworld series is one of the longest series of books ever written, with 41 books. If you haven't read anything in Discworld before, where should you start?
  * [4. Classifying Irises](examples/4_classifying_irisses/RESULTS.md) - **iPython, scikit-learn**
   * Let's use a sample `scikit-learn` data set to learn about stochiast gradient descent classification.
+ * [5. Finding Outliers](examples/5_outliers/RESULTS.md) -- **iPython, scipy, matplotlib**
+  * We've all seen bad data points in data that we wanted to remove. But how can we automate the process of finding bad data points? In this example, we'll implement the generalized Extreme Studentized Deviant (ESD) Test to solve the problem.
