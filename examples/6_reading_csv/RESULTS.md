@@ -1,18 +1,18 @@
 # The Fastest Way to Read a CSV File
 
-What's the fastest way to read in large or large-ish CSV files? Does it depend on the data type in the columns? Should you use a pre-canned tool (like in `pandas`), or build your own? Is it faster to read CSV files or fixed-width files? What can you do to speed things up? This is a big question, but it makes a big difference. So let's test.
+In the science and data science worlds it is extremely common to need to read CSV files, and process them line by line. So it is worth our time to look at the various ways to do this. In this study, we will only look at files under ~200MB. Not because files larger than a GB or even a Terrabyte are uncommon, but because the methods involved in reading files that are too large to fit into memory are different and the results start to depend heavily on how much memory you will have.
+
+There is a big parameter space for this problem. To start, we will break our study down into two components: the file being read, and the method used to read it. Obviously the file size might affect the read time. But we will also consider: the number of columns, the data types of the text in each column, and we should consider fixed-width file types. And we will consider as many different was to read the files as we can think of.
 
 ## Methods
 
 You can find the Python script I used to run these tests [here]().
 
-First, we will break our study down into two components: the file being read, and the method for reading the file.
-
 #### The File
 
 We will want to test files with various properties:
 
-* **File Type**: simple CSV, or fixed format (with fixed or variable widths)
+* **File Type**: simple CSV, fixed format (with equal or variable widths)
 * **Data Types**: just floats, floats and ints, numbers and strings, or just strings
 * **Number of Columns**: 5, 10, 50, 100, 200
 * **File Size (MB)**: 1, 5, 10, 50, 100, 200
@@ -29,7 +29,7 @@ There are many, many ways to read a text file in Python. This list is sure to no
 * `for line in fileinput.input()`
 * `pandas.read_csv`
 
-With 5 different reading methods, our work is cut out for us with 1800 different tests to run.
+This may only look like 5 different methods to reading a file. But we will want to try variations on most of these. For instance, we may want to try different ways of reading fixed-width files, as that has not been a high-priority target for a lot of Python developers lately.
 
 #### How to Time the Test
 
