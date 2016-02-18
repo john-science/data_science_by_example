@@ -33,7 +33,23 @@ This may only look like 5 different methods to reading a file. But we will want 
 
 #### How to Time the Test
 
-TODO
+To time our various trials we will use the [timeit](https://docs.python.org/2/library/timeit.html) module. Here is a toy example:
+
+    >>> def costly_func(lst):
+    ...     return map(lambda x: x^2, lst)
+    ... 
+    >>> 
+    >>> def wrapper(func, *args, **kwargs):
+    ...     def wrapped():
+    ...         return func(*args, **kwargs)
+    ...     return wrapped
+    ... 
+    >>> short_list = range(10) 
+    >>> wrapped = wrapper(costly_func, short_list)
+    >>> timeit.timeit(wrapped, number=1000)
+    0.00409102439880371
+
+The results would be more accurate with a higher `number` of iterations. But I think there's a good chance that reading some of these files will take on the order of a second, so we can't run a million iterations.
 
 ## RESULTS
 
