@@ -12,12 +12,12 @@ You can find the Python script I used to run these tests [here]().
 
 We will want to test files with various properties:
 
-* **File Type**: simple CSV, fixed format (with equal or variable widths)
+* **File Type**: simple CSV, fixed format
 * **Data Types**: just floats, floats and ints, numbers and strings, or just strings
 * **Number of Columns**: 5, 10, 50, 100, 200
 * **File Size (MB)**: 1, 5, 10, 50, 100, 200
 
-This gives us a grand total of 360 different files to test.
+This gives us a grand total of 240 different files to test.
 
 #### Reading Method
 
