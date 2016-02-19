@@ -25,8 +25,7 @@ This means we will need 90 different files to test.
 There are many, many ways to read a text file in Python. This list is sure to not be exhaustive, but let's try several variations, just to see:
 
 * `for line in f`
-* `for line in f.readlines()` (For completeness, this is a Python 2.7-only option.)
-* `for line in f.xreadlines()` (In Python 3.x, this is simply `f.readlines()`)
+* `for line in f.readlines()` (In Python 3.x, or  `f.xreadlines()` in 2.x.)
 * `for line in fileinput.input()`
 * `pandas.read_csv`
 * `pandas.read_fwf`
