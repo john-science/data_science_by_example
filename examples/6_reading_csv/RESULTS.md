@@ -1,10 +1,10 @@
 # The Fastest Way to Read a CSV File
 
-In the science and data science worlds it is extremely common to need to read CSV files, and process them line by line. So it is worth our time to look at the various ways to do this. In this study, we will only look at files under ~200MB. Not because files larger than a GB or even a Terrabyte are uncommon, but because the methods involved in reading files that are too large to fit into memory are different and the results start to depend heavily on how much memory you will have.
+It is extremely common to need to read CSV files and process them line by line. So it is worth our time to look at the various ways to do this. In this study, we will only look at files under ~200MB. Not because files larger than a GB or even a Terrabyte are uncommon, but because the methods involved in reading files that are too large to fit into memory are different and the results start to depend heavily on how much memory you have.
 
-There is a big parameter space for this problem. To start, we will break our study down into two components: the file being read, and the method used to read it. Obviously the file size might affect the read time. But we will also consider: the number of columns, and we should consider fixed-width file types. And we will consider as many different was to read the files as we can think of.
+There is a big parameter space for this problem. To start, we will break our study down into two components: the file read, and the reading method. Obviously, the file size might affect the read time. But what about the number of columns? We will also consider fixed-format files. And we will consider as many different ways to read these files as we can think of.
 
-Obviously, CSV (or fixed-width) files might contain numerical data. But in this instance we are not interested in timing the conversion of strings to float or integers, so we will simply parse the lines into strings. (If you're interested, converting a string to a `float` is much faster than converting it to an `int` in Python.)
+Obviously, CSV (or fixed-format) files might contain numerical data. But in this instance we are not interested in testing the conversion of strings to float or integers, so we will simply parse the lines into strings. (If you're interested, converting a string to a `float` is much faster than converting it to an `int` in Python.)
 
 ## Methods
 
@@ -14,11 +14,11 @@ You can find the Python script I used to run these tests [here]().
 
 We will want to test files with various properties:
 
-* **File Type**: simple CSV, fixed format
+* **File Type**: simple CSV, fixed format (padded and un-padded)
 * **Number of Columns**: 5, 10, 50, 100, 200
 * **File Size (MB)**: 1, 5, 10, 50, 100, 200
 
-This gives us a grand total of 60 different files to test.
+This means we will need 90 different files to test.
 
 #### Reading Method
 
@@ -29,8 +29,11 @@ There are many, many ways to read a text file in Python. This list is sure to no
 * `for line in f.xreadlines()` (In Python 3.x, this is simply `f.readlines()`)
 * `for line in fileinput.input()`
 * `pandas.read_csv`
+* `pandas.read_fwf`
+* `struct` to unpack fwf (see [SO](http://stackoverflow.com/questions/4914008/efficient-way-of-parsing-fixed-width-files-in-python))
+* "slicing" fixed-width files (see [SO](http://stackoverflow.com/questions/4914008/efficient-way-of-parsing-fixed-width-files-in-python))
 
-This may only look like 5 different methods to reading a file. But we will want to try variations on most of these. For instance, we may want to try different ways of reading fixed-width files, as that has not been a high-priority target for a lot of Python developers lately.
+Each of the above approaches will required lots of testing and variations to try and improve performance. I will try to keep as many of these around as possible for the final analysis. Though I expect I will find several dead ends.
 
 #### How to Time the Test
 
