@@ -20,11 +20,12 @@ class RandomCsv(object):
         self.out_dir = 'temp/'
         os.mkdir(self.out_dir)
 
-    def generate_fixed_width_equal(self, width, file_size,
-                                   num_int_cols, num_float_cols, num_str_cols):
+    def generate_fixed_format(self, width, file_size, num_int_cols, num_float_cols, num_str_cols):
         ''' Generate a random fixed-width text file with a set number of columns full of
-            strings, floants, and/or integers. Each column has the same width.
-            And design the file so it has close to the desired file size (in MB).
+            strings, floants, and/or integers. Design the file so it has close to the desired
+            file size (in MB).
+            Each column in this fixed-width file will be the same width, as this will obviously
+            be easier to parse than a variable-width file.
         '''
         file_path = self.out_dir + str(file_size) + 'MB_int' + str(num_int_cols) + '_float' + \
                     str(num_float_cols) + '_str' + str(num_str_cols) + '_fixed_equal.txt'
