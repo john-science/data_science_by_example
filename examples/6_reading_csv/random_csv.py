@@ -7,12 +7,10 @@ if sys.version_info[0] < 3:  range = xrange
 
 def main():
     rand = RandomCsv()
-    rand.generate_csv(1, 8)
-    rand.generate_csv(5, 12)
-    rand.generate_csv(100, 68)
-    rand.generate_fixed_format(1, 6, 10)
-    rand.generate_fixed_format(5, 8, 24, padding=1)
-    rand.generate_fixed_format(100, 24, 12, padding=3)
+    file_path = rand.generate_csv(1, 8)
+    file_path = rand.generate_csv(5, 12)
+    file_path = rand.generate_fixed_format(10, 8, 24, padding=1)
+    file_path = rand.generate_fixed_format(100, 24, 12, padding=3)
 
 
 class RandomCsv(object):
@@ -21,7 +19,8 @@ class RandomCsv(object):
 
     def __init__(self):
         self.out_dir = 'temp/'
-        os.mkdir(self.out_dir)
+        if not os.path.exists(self.out_dir):
+            os.mkdir(self.out_dir)
 
     def generate_fixed_format(self, file_size, columns, width, padding=0):
         ''' Generate a random fixed-width text file with a set number of columns full of
@@ -63,6 +62,8 @@ class RandomCsv(object):
             row += 1
         f.close()
 
+        return file_path
+
     def generate_csv(self, file_size, columns):
         ''' Generate a random CSV file with a set number of columns full of
             strings, floants, and/or integers. And design the file so it has
@@ -98,6 +99,8 @@ class RandomCsv(object):
             f.write(data[row % rows])
             row += 1
         f.close()
+
+        return file_path
 
     @staticmethod
     def generate_string(how_many, str_length=10):
