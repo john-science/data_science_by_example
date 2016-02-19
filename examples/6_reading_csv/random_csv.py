@@ -17,7 +17,7 @@ def main():
 
 class RandomCsv(object):
 
-    CHARS = list('pack my box with five dozen liquors 01234568789')
+    CHARS = list('pack my box with five dozen liquors')
 
     def __init__(self):
         self.out_dir = 'temp/'
