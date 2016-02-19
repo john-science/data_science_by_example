@@ -2,56 +2,52 @@
 from numpy import array, random
 import os
 import sys
-if sys.version_info[0] < 3: range = xrange
+if sys.version_info[0] < 3:  range = xrange
 
 
 def main():
     rand = RandomCsv()
-    rand.generate_csv(1, 3, 2, 4)
-    rand.generate_csv(5, 5, 12, 4)
-    rand.generate_csv(100, 2, 7, 10)
+    rand.generate_csv(1, 8)
+    rand.generate_csv(5, 12)
+    rand.generate_csv(100, 68)
+    rand.generate_fixed_format(1, 6, 10)
+    rand.generate_fixed_format(5, 8, 24)
+    rand.generate_fixed_format(100, 24, 12)
 
 
 class RandomCsv(object):
 
-    CHARS = list('abcdefghijklmnopqrstuvwxyz rstlne ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+    CHARS = list('pack my box with five dozen liquors 01234568789')
 
     def __init__(self):
         self.out_dir = 'temp/'
         os.mkdir(self.out_dir)
 
-    def generate_fixed_format(self, width, file_size, num_int_cols, num_float_cols, num_str_cols):
+    def generate_fixed_format(self, file_size, columns, width):
         ''' Generate a random fixed-width text file with a set number of columns full of
-            strings, floants, and/or integers. Design the file so it has close to the desired
+            randomly-generated strings. Design the file so it has close to the desired
             file size (in MB).
             Each column in this fixed-width file will be the same width, as this will obviously
             be easier to parse than a variable-width file.
         '''
-        file_path = self.out_dir + str(file_size) + 'MB_int' + str(num_int_cols) + '_float' + \
-                    str(num_float_cols) + '_str' + str(num_str_cols) + '_fixed_equal.txt'
+        file_path = self.out_dir + str(file_size) + 'MB_' + str(columns) + '_columns.txt'
         rows = 100
         data = []
 
-        # build columns of the correct kinds of data types
-        for _ in range(num_str_cols):
-            data.append(RandomCsv.generate_string(rows, str_length=random.randint(8, 24)))
-        for _ in range(num_float_cols):
-            data.append(RandomCsv.generate_floats(rows, order=random.randint(1, 4)))
-        for _ in range(num_int_cols):
-            data.append(RandomCsv.generate_ints(rows, digits=random.randint(3, 8)))
+        # build columns of random strings
+        for _ in range(columns):
+            data.append(RandomCsv.generate_string(rows, str_length=width))
 
         # transpose the columns into rows
         data = list(map(list, zip(*data)))
 
         # convert rows of data into strings
         for i in range(len(data)):
-            data[i] = ','.join([str(d)[:width].rjust(width) for d in data[i]]) + '\n'
+            data[i] = ''.join([str(d) for d in data[i]]) + '\n'
 
         # build header
-        header = ['s' + str(j)[:width].rjust(width) for j in range(num_str_cols)] + \
-                 ['f' + str(j)[:width].rjust(width) for j in range(num_float_cols)] + \
-                 ['i' + str(j)[:width].rjust(width) for j in range(num_int_cols)]
-        header = ','.join(header) + '\n'
+        header = [('c' + str(j))[:width].rjust(width) for j in range(columns)]
+        header = ''.join(header) + '\n'
 
         # determine how many rows to write to the file
         number_rows = int((file_size * 1024 * 1024 - len(header)) / len(data[0]))
@@ -65,23 +61,18 @@ class RandomCsv(object):
             row += 1
         f.close()
 
-    def generate_csv(self, file_size, num_int_cols, num_float_cols, num_str_cols):
+    def generate_csv(self, file_size, columns):
         ''' Generate a random CSV file with a set number of columns full of
             strings, floants, and/or integers. And design the file so it has
             close to the desired file size (in MB).
         '''
-        file_path = self.out_dir + str(file_size) + 'MB_int' + str(num_int_cols) + '_float' + \
-                    str(num_float_cols) + '_str' + str(num_str_cols) + '.csv'
+        file_path = self.out_dir + str(file_size) + 'MB_int' + str(columns) + '_columns.csv'
         rows = 100
         data = []
 
-        # build columns of the correct kinds of data types
-        for _ in range(num_str_cols):
+        # build columns of strings
+        for _ in range(columns):
             data.append(RandomCsv.generate_string(rows, str_length=random.randint(8, 24)))
-        for _ in range(num_float_cols):
-            data.append(RandomCsv.generate_floats(rows, order=random.randint(1, 4)))
-        for _ in range(num_int_cols):
-            data.append(RandomCsv.generate_ints(rows, digits=random.randint(3, 8)))
 
         # transpose the columns into rows
         data = list(map(list, zip(*data)))
@@ -91,9 +82,7 @@ class RandomCsv(object):
             data[i] = ','.join([str(d) for d in data[i]]) + '\n'
 
         # build header
-        header = ['str' + str(j) for j in range(num_str_cols)] + \
-                 ['float' + str(j) for j in range(num_float_cols)] + \
-                 ['int' + str(j) for j in range(num_int_cols)]
+        header = ['col' + str(j) for j in range(columns)]
         header = ','.join(header) + '\n'
 
         # determine how many rows to write to the file
@@ -107,14 +96,6 @@ class RandomCsv(object):
             f.write(data[row % rows])
             row += 1
         f.close()
-
-    @staticmethod
-    def generate_ints(how_many, digits=3):
-        return list(random.randint(0, 10**digits, how_many))
-
-    @staticmethod
-    def generate_floats(how_many, order=3):
-        return list(random.random(how_many) * 10**order)
 
     @staticmethod
     def generate_string(how_many, str_length=10):
