@@ -11,8 +11,8 @@ def main():
     rand.generate_csv(5, 12)
     rand.generate_csv(100, 68)
     rand.generate_fixed_format(1, 6, 10)
-    rand.generate_fixed_format(5, 8, 24)
-    rand.generate_fixed_format(100, 24, 12)
+    rand.generate_fixed_format(5, 8, 24, padding=1)
+    rand.generate_fixed_format(100, 24, 12, padding=3)
 
 
 class RandomCsv(object):
@@ -23,14 +23,16 @@ class RandomCsv(object):
         self.out_dir = 'temp/'
         os.mkdir(self.out_dir)
 
-    def generate_fixed_format(self, file_size, columns, width):
+    def generate_fixed_format(self, file_size, columns, width, padding=0):
         ''' Generate a random fixed-width text file with a set number of columns full of
             randomly-generated strings. Design the file so it has close to the desired
             file size (in MB).
             Each column in this fixed-width file will be the same width, as this will obviously
             be easier to parse than a variable-width file.
         '''
-        file_path = self.out_dir + str(file_size) + 'MB_' + str(columns) + '_columns.txt'
+        file_path = self.out_dir + str(file_size) + 'MB_' + str(columns) + '_columns' + \
+                    str(padding) + 'padding.txt'
+        pad = ' '*padding
         rows = 100
         data = []
 
@@ -43,11 +45,11 @@ class RandomCsv(object):
 
         # convert rows of data into strings
         for i in range(len(data)):
-            data[i] = ''.join([str(d) for d in data[i]]) + '\n'
+            data[i] = pad.join([str(d) for d in data[i]]) + '\n'
 
         # build header
         header = [('c' + str(j))[:width].rjust(width) for j in range(columns)]
-        header = ''.join(header) + '\n'
+        header = pad.join(header) + '\n'
 
         # determine how many rows to write to the file
         number_rows = int((file_size * 1024 * 1024 - len(header)) / len(data[0]))
