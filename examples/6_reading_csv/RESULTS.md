@@ -24,17 +24,20 @@ There are many, many ways to read a text file in Python. This list is sure to no
 * `for line in f`
 * `for line in f.readlines()` (In Python 3.x, or  `f.xreadlines()` in 2.x.)
 * `pandas.read_csv`
-* `pandas.io.parsers.read_csv`
 * `for line in fileinput.input()`
 * `csv.reader`
-* `re`
 * `mmap`
 * `numpy.genfromtxt`
-* `numpy.loadtxt`
-* `numpy.from_file`
-* `fastcsv`
+* `numpy.fromfile`
+* `split` vs `re`
 
 Each of the above approaches will required lots of testing and variations to try and improve performance. I will try to keep as many of these around as possible for the final analysis. Though I expect I will find several dead ends.
+
+Things that might still be worth trying:
+
+* `numpy.fromfile` (doesn't appear to be able to read string types?)
+* `numpy.load` (demands the file already be in a numpy pickle format)
+* `fastcsv` (serious problems installing with pip)
 
 #### How to Time the Test
 

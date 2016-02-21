@@ -14,7 +14,7 @@ def main():
 
 class RandomCsv(object):
 
-    CHARS = list('pack my box with five dozen liquors PACK MY BOX WITH FIVE DOZEN LIQUORS')
+    CHARS = list('pack my box with five dozen liquors THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG')
 
     def __init__(self):
         self.out_dir = 'temp/'
@@ -26,7 +26,7 @@ class RandomCsv(object):
             strings, floants, and/or integers. And design the file so it has
             close to the desired file size (in MB).
         '''
-        file_path = self.out_dir + str(file_size) + 'MB_int' + str(columns) + '_columns.csv'
+        file_path = self.out_dir + str(file_size) + '_MB_' + str(columns) + '_columns.csv'
         rows = 100
         data = []
 

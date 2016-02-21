@@ -2,6 +2,7 @@
 from csv import reader, DictReader
 import fileinput
 from mmap import mmap, PROT_READ
+from numpy import fromfile, genfromtxt, loadtxt, nditer
 from pandas import read_csv
 import re
 import sys
@@ -17,12 +18,15 @@ NUMBER_TRIALS = 1
 
 
 def main():
-    print('\nfile_type,number of columns,file size (MB),function,time (sec)')
+    print('file_type,number of columns,file size (MB),function,time (sec)')
     rand = RandomCsv()
 
     # CSV-reading functions
-    csv_readers = [for_line_in_f_split, for_line_in_f_split_with, pandas_read_csv_df,
-                   fileinput_with_firstline, csv_reader, csv_dict_reader, mmap_while, mmap_for]
+    csv_readers = [simple_read, naive_read_split_split,
+                   for_line_in_f_split, for_line_in_f_split_with, pandas_read_csv_df,
+                   pandas_read_csv_iterrows, fileinput_with_firstline, csv_reader,
+                   csv_dict_reader, mmap_while, mmap_for, numpy_loadtxt, numpy_genfromtxt,
+                   numpy_genfromtxt_nditer, numpy_genfromtxt_range_shape]
     if sys.version_info[0] < 3:
         csv_readers.append(for_line_in_f_xreadlines_split)
         csv_readers.append(re_xreadlines)
@@ -44,14 +48,6 @@ def main():
             #break
         #break
 
-    print('')
-
-
-'''
-More to come!
-
-http://softwarerecs.stackexchange.com/questions/7463/fastest-python-library-to-read-a-csv-file
-'''
 
 def wrapper(func, *args, **kwargs):
     ''' Helper function to make using timeit easier
@@ -60,6 +56,29 @@ def wrapper(func, *args, **kwargs):
     def wrapped():
         return func(*args, **kwargs)
     return wrapped
+
+
+def simple_read(file_path):
+    ''' This simply reads the entire file into one long string.
+        Obviously, this does not parse a CSV in a line-by-line
+        fashion, this is just meant to be a baseline to compare
+        the reading functions against.
+    '''
+    whole_file = open(file_path, 'r').read()
+
+
+def naive_read_split_split(file_path):
+    ''' This is the most naive way to parse a CSV file line-by-line.
+        Read the whole file into one big string, then split on
+        carriage returns and split on commas.
+        One hopes that every other CSV parsing approach will be
+        significantly faster than this, or what's the point?
+    '''
+    lines = open(file_path, 'r').read().split('\n')
+    header = lines.pop(0)
+    line_bits = None
+    for line in lines:
+        line_bits = line.split(',')
 
 
 def for_line_in_f_split(file_path):
@@ -124,11 +143,22 @@ def for_line_in_f_xreadlines_split(file_path):
 
 
 def pandas_read_csv_df(file_path):
-    ''' I'm not sure this function is as good as the rest, as it reads the data
-        into a giant Pandas Data Frame and means you have to change whatever
-        line-by-line reading logic you were going to use.
+    ''' Using the pandas read_csv function is fast, but doesn't allow
+        line-by-line reading. So I think this seems artificially faster
+        than it should be.
     '''
     df = read_csv(file_path)
+
+
+def pandas_read_csv_iterrows(file_path):
+    ''' Using the pandas read_csv function is fast, but doesn't allow
+        line-by-line reading. So I think this seems artificially faster
+        than it should be.
+    '''
+    df = read_csv(file_path)
+    line_bits = None
+    for i, row in df.iterrows():
+        line_bits = row
 
 
 def re_readlines(file_path):
@@ -229,12 +259,50 @@ def mmap_for(file_path):
             line_bits = str(line).rstrip().split(',')
 
 
-def open_with_numpy_loadtxt(file_path):
+def numpy_loadtxt(file_path):
     '''
-    http://stackoverflow.com/questions/4315506/load-csv-into-2d-matrix-with-numpy-for-plotting
+    Read the simple CSV file using the numpy.loadtxt module.
+    NOTE: This function returns each line as a list of bytes, not strings.
+          So, to be fair, I should convert these to lists of strings, but
+          it is already so slow I know `loadtxt` isn't worth it.
     '''
-    data = loadtxt(open(file_path, 'rb'), delimiter=',', skiprows=1)
-    return data
+    array_2d_strs = loadtxt(open(file_path, 'r'), delimiter=',', skiprows=1, dtype='str')
+
+
+def numpy_fromfile(file_path):
+    '''
+    Read the simple CSV file using the numpy.fromfile module.
+    '''
+    # TODO: This doesn't work at all: Segmentation fault (core dumped)
+    all_lines = fromfile(file_path, dtype='str', sep=',', count=-1)
+
+
+def numpy_genfromtxt(file_path):
+    '''
+    Read the simple CSV file using the numpy.genfromtxt module.
+    '''
+    array_2d_strs = genfromtxt(file_path, dtype='str', delimiter=',', skip_header=1)
+
+
+def numpy_genfromtxt_nditer(file_path):
+    '''
+    Read the simple CSV file using the numpy.genfromtxt module.
+    '''
+    array_2d_strs = genfromtxt(file_path, dtype='str', delimiter=',', skip_header=1)
+    line_bits = None
+    for line in nditer(array_2d_strs):
+        line_bits = line
+
+
+def numpy_genfromtxt_range_shape(file_path):
+    '''
+    Read the simple CSV file using the numpy.genfromtxt module.
+    '''
+    array_2d_strs = genfromtxt(file_path, dtype='str', delimiter=',', skip_header=1)
+    line_bits = None
+    rows,colums = array_2d_strs.shape
+    for i in range(rows):
+        line_bits = array_2d_strs[i]
 
 
 if __name__ == '__main__':
