@@ -14,7 +14,7 @@ from random_csv import RandomCsv
 # CONFIGURATION VALUES
 COLUMNS = [5, 10, 50, 100, 200]
 FILE_SIZE_MB  = [1, 5, 10, 50, 100, 200]
-NUMBER_TRIALS = 1
+NUMBER_TRIALS = 10
 
 
 def main():
