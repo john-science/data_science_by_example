@@ -61,6 +61,6 @@ The results would be more accurate with a higher `number` of iterations. And by 
 
 ## RESULTS
 
-You can find the iPython script I used to analyze the results and make plots [here]().
+You can find the iPython script I used to analyze the results and make plots [here](read_csv_timing_analysis.ipynb).
 
-> TODO
+> TODO: Everything
