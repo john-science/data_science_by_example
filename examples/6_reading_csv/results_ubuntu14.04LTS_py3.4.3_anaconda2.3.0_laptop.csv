@@ -1,4 +1,4 @@
-file_type,number of columns,file size (MB),function,time (sec)
+function,number of columns,file size (MB),time (sec)
 simple_read,1,5,0.0007287169999472098
 naive_read_split_split,1,5,0.007549840199862956
 for_line_in_f_split,1,5,0.008099694200063822

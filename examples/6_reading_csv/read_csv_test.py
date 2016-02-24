@@ -18,7 +18,7 @@ NUMBER_TRIALS = 10
 
 
 def main():
-    print('file_type,number of columns,file size (MB),function,time (sec)')
+    print('function,file size (MB),number of columns,time (sec)')
     rand = RandomCsv()
 
     # CSV-reading functions
@@ -45,8 +45,6 @@ def main():
                 time_seconds = timeit(wrapped, number=NUMBER_TRIALS) / NUMBER_TRIALS
                 line = ','.join([f.__name__, str(file_size), str(col), str(time_seconds)])
                 print(line)
-            #break
-        #break
 
 
 def wrapper(func, *args, **kwargs):
