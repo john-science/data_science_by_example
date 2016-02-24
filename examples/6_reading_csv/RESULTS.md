@@ -17,7 +17,7 @@ We will test 90 different file sizes:
 * **Number of Columns**: 5, 10, 50, 100, 200
 * **File Size (MB)**: 1, 5, 10, 50, 100, 200
 
-#### Reading Method
+#### The Reading Method
 
 There are many, many ways to read a text file in Python. This list is sure to not be exhaustive, but let's try several variations, just to see:
 
@@ -41,7 +41,7 @@ Things that might still be worth trying:
 
 #### How to Time the Test
 
-To time our various trials we will use the [timeit](https://docs.python.org/2/library/timeit.html) module. Here is a toy example:
+We will use the [timeit](https://docs.python.org/2/library/timeit.html) module. Here is a toy example:
 
     >>> def costly_func(lst):
     ...     return map(lambda x: x^2, lst)
@@ -57,10 +57,10 @@ To time our various trials we will use the [timeit](https://docs.python.org/2/li
     >>> timeit.timeit(wrapped, number=1000)
     0.00409102439880371
 
-The results would be more accurate with a higher `number` of iterations. But I think there's a good chance that reading some of these files will take on the order of a second, so we can't run a million iterations.
+The results would be more accurate with a higher `number` of iterations. And by default `timeit` uses a million iterations. But reading large text files takes seconds, not microseconds, so we will have to make do with fewer iterations.
 
 ## RESULTS
 
-You can find the iPython script I used to analyze the results and make plots [here]().
+You can find the iPython script I used to analyze the results and make plots [here](read_csv_timing_analysis.ipynb).
 
-> TODO
+> TODO: Everything
