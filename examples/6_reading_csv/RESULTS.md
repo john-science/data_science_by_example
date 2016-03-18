@@ -65,6 +65,8 @@ You can find the iPython script I used to analyze the results and make plots [he
 
 > TODO
 
+![CSV read time by size](read_time_by_size.png)
+
 1. Select only functions worth comparing (`open` over `with`).
 2. Does # of columns matter?
 3. Who wins?
