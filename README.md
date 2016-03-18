@@ -3,11 +3,11 @@
 This repository is just a collection of examples using different libraries and tools for data analysis. As such, it is meant to be an every-growing, every-changing thing.
 
  * [1. The Philosophy of Wikipedia](examples/1_philosphy_of_wikipedia/RESULTS.md)
-  * **Description**: Randal Monroe, from XKCD, posited the theory that if you start at *any* Wikipedia article and take the first link,then take the first link on that article, etcetera, you will eventually end up on the Philosophy page. Let's try it.
+  * **Description**: Randal Monroe, of XKCD, posited the theory that if you start at *any* Wikipedia article and take the first link,then take the first link on that article, etcetera, you will eventually end up on the Philosophy page. Let's try it.
   * **Libraries**: iPython, BeautifulSoup, requests
   * **Concepts**: web scraping
  * [2. Parsing IMDB for the Best Writers & Directors](examples/2_imdb_writers_directors/RESULTS.md)
-  * **Description**: Everyone knows their favorite actors. But only movie buffs know who their favorite directors are. And no one seems to talk about their favorite movie writers. IMDB has a wealth of information available, let's take a look.
+  * **Description**: Everyone knows their favorite actors. But only movie buffs know who their favorite directors are. And no one seems to know their favorite movie writers. IMDB has a wealth of information, let's dig through.
   * **Libraries**: iPython, Pandas
   * **Concepts**: web scraping, data analysis
  * [3. Parsing GoodReads for the Discworld Series](examples/3_discworld_on_goodreads/RESULTS.md)
