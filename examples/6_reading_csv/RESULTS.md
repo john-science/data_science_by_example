@@ -61,13 +61,16 @@ The results would be more accurate with a higher `number` of iterations. And by 
 
 ## RESULTS
 
-You can find the iPython script I used to analyze the results and make plots [here](read_csv_timing_analysis.ipynb).
-
-> TODO
+You can find the iPython script I used to analyze the results and make plots [here](read_csv_timing_analysis.ipynb). As you can see, plotting all lines for all the different CSV reading methods, for all different file sizes gets quite messy. So here is a reduced plot of just the fastest methods for large CSV files with 5 columns and 200 columns:
 
 ![CSV read time by size](read_time_by_size.png)
 
-1. Select only functions worth comparing (`open` over `with`).
-2. Does # of columns matter?
-3. Who wins?
+There are some important (though perhaps obvious results):
+
+1. It doesn't matter if you `open` the file using `with`, there is no performance change.
+2. If possible, more columns read faster for the same file size. Though you usually won't have control over this. This stems from the fact that file IO is slower than in-memory calculations (string parsing, in this case).
+
+Finally, what methods were fastest?
+
+TODO
 
