@@ -72,5 +72,10 @@ There are some important (though perhaps obvious results):
 
 Finally, what methods were fastest?
 
-TODO
+It turns out, the fastest way to read a CSV file line-by-line is the standard library `f.readlines()` (or `f.xreadlines()` in Python 2.x). Followed closesly by a naive `f.readlines().split('\n')`. This result was quite suprising to me, as there are so many different (third-party) solutions to this problem. But none of them managed to improve upon the most basic standard library solution.
+
+Now, there is a reason for this, these other libraries assume that you want to automate the process of parsing the line in the text file. For instance, the standard library `csv` module parses the line into a list or dictionary for you. And the `pandas` solutions for reading a CSV file are really very, very fast. But they don't allow for line-by-line parsing, and assume you are okay with keeping the entire file in memory at one time, and further that you are okay with the data being in a `Pandas.DataFrame` object.
+
+In the end, if you *have* to parse a CSV file in Python line-by-line, the easiest way is already the fastest. That's handy.
+
 
