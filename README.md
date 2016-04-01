@@ -3,7 +3,7 @@
 This repository is just a collection of examples using different libraries and tools for data analysis. As such, it is meant to be an every-growing, every-changing thing.
 
  * [1. The Philosophy of Wikipedia](examples/1_philosphy_of_wikipedia/RESULTS.md)
-  * **Description**: Randal Monroe, of XKCD, posited that if you start at *any* Wikipedia article and take the first link, then take the first link on that article, and repeat, you always end up on the Philosophy page. Let's try it.
+  * **Description**: Randal Monroe, of XKCD, posited that if you start on any Wikipedia article and take the first link, then take the first link on that article, and repeat, you always end up on the Philosophy page. Let's try it.
   * **Libraries**: iPython, BeautifulSoup, requests
   * **Concepts**: web scraping
  * [2. Parsing IMDB for the Best Writers & Directors](examples/2_imdb_writers_directors/RESULTS.md)
@@ -23,6 +23,6 @@ This repository is just a collection of examples using different libraries and t
   * **Libraries**: iPython, scipy, matplotlib
   * **Concepts**: data analysis, outlier identification, ESD Testing
  * [6. Reading CSVs Fast](examples/6_reading_csv/RESULTS.md)
-  * **Description**: Reading a CSV file line-by-line is an extremely common problem, one with a huge number of solutions. But which is fastest?
+  * **Description**: Reading a CSV file line-by-line is a common problem, with a lot of solutions. Which is fastest?
   * **Libraries**: numpy, re, pandas, io
   * **Concepts**: file-parsing, line-by-line reading
