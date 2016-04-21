@@ -1,0 +1,132 @@
+aemon
+aeron
+alliser
+areo
+arianne
+arya:arry,arya stark
+arys:arys oakheard, oakheard
+asha
+baelish:petyr baelish,petyr,littlefinger,little finger
+balon
+benjen
+biter
+bowen
+brandon
+brienne:brienne of tarth,brienne tarth,brienne the beauty,maid of tarth
+bronn
+brynden:bloodraven
+catelyn:stoneheart,catelyn stark
+cersei:cersei lannister
+chiswyck
+connington:jon connington
+craster
+daario
+daenerys:mother of dragon,dany,mhysa,breaker of chains,stormborn
+davos:davos seaworth,onion knight
+dondarrion:beric dondarrion,beric
+doran:doran martell,prince of dorne
+drogo:khal drog,sun and stars
+duncan
+dunsen
+eddard:ned
+eddison
+edmure
+edwyn_frey:edwyn frey
+elia
+ellaria
+euron
+gendry
+giantsbane:tormund giantsbane,tormunc
+gilly
+gregor:the mountain
+greyworm:grey worm
+hizdahr
+hodor:hodor hodor hodor,hodor hodor
+hoster
+hot_pie:hot pie
+illyrio
+ilyn
+jaime:kingslayer
+janos:janos slynt
+jaqen
+jeor:old bear
+jeyne
+jeyne:jeyne westerling
+joffrey:king joffrey,joffrey lannister
+jojen
+jon_arryn:jon arryn
+jon:jon snow,lord snow
+jorah:jorah mormont
+kevan
+kevan:kevan lannister
+lancel
+loras:night of flowers
+lorch
+lothar_frey:lothar frey
+lyanna
+lyarra
+lysa
+mace_tyrell:mace tyrell
+mance
+margaery
+meera
+melisandre:red woman
+merrett_frey:merrett frey
+meryn:ser meryn trant
+missandei
+myrcella
+oberyn:red viper
+olenna
+osha
+podrick:pod
+polliver
+poole:jeyne poole
+pycelle
+quentyn
+qyburn
+raff:raff the sweetling
+ramsay:bastard of bolton,bastard of the dreadfort
+randyll
+rattleshirt:lord of bones
+renly:renly baratheon
+rhaegar
+rhaegar_frey:rhaegar frey
+rhaego
+rickard
+rickon
+robb:young wolf,king in the north,robb stark
+robert:king robert baratheon,king robert,robert baratheon,robert baratheon
+roose
+rorge
+samwell:sam
+sandor:hound
+sansa:sansa stark
+selmy:barristan selmy,barristan the bold,barristan
+selwyn:selwyn tarth
+selyse
+shireen
+stannis
+sweetrobin:robert arryn
+syrio:syrio forel
+theon
+thoros
+tickler
+tommen
+trystane
+tycho
+tyrion:imp,halfman:kinslayer
+tytos:tytos lannister
+tywin:tywin lannister
+unella
+val
+varys:the spider
+victarion
+viserion
+walda_frey:walda frey
+walder_frey:walder frey
+walton_frey:walton frey
+weese
+yezzan
+ygritte
+yohn
+yoren
