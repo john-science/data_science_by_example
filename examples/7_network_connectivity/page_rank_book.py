@@ -111,3 +111,27 @@ class PageRankBooks(object):
 
 if __name__ == '__main__':
     main()
+
+
+"""
+Testing the NetworkX plotting library:
+
+import matplotlib.pyplot as plt
+import networkx as nx
+
+G = nx.Graph()
+G.add_edge('Arya', 'Jon', color='r', weight=6)
+G.add_edge('Jon', 'Catelyn', color='b', weight=4)
+G.add_edge('Catelyn', 'Tyrion', color='g', weight=1)
+
+pos = nx.circular_layout(G)
+
+edges = G.edges()
+colors = [G[u][v]['color'] for u,v in edges]
+weights = [G[u][v]['weight'] for u,v in edges]
+node_sizes = [480, 400, 320, 480]
+
+nx.draw(G, pos, edges=edges, edge_color=colors, width=weights, with_labels=True,
+        node_size=node_sizes)
+plt.savefig("networkx_testing.png")
+"""
