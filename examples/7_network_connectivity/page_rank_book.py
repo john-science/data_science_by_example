@@ -19,15 +19,15 @@ class PageRankBooks(object):
         self.charachters = []
         self.pseudonymns = {}
         self._read_names()
-        self.ranks = {}
-        self._init_ranks()
+        self.connections = {}
+        self._init_connections()
 
-    def _init_ranks(self):
-        ''' Initialize the ranks collection with the present list
+    def _init_connections(self):
+        ''' Initialize the characters connections with the present list
             of character names.
         '''
         for name in self.characters:
-            self.ranks[name] = defaultdict(int)
+            self.connections[name] = defaultdict(int)
 
     def _read_names(self):
         ''' Define all of the character names in the books beforehand.
@@ -48,9 +48,18 @@ class PageRankBooks(object):
                 self.pseudonymns[name] = ln[1:]
         f.close()
 
-    def page_rank_one_file(self, file_path):
-        ''' Parse a single input file, creating the basic network connections needed
-            to page rank one book.
+    def find_all_connections(self, file_paths):
+        ''' Just a helper method to find all the connections between characters
+            in a book. Even if that book is broken into parts.
+        '''
+        self.charachters = []
+        self.pseudonymns = {}
+        for file_path in file_paths:
+                self._find_connections(file_path)
+
+    def _find_connections(self, file_path):
+        ''' Parse a single input file, creating the basic network connections
+            between the characters of a book.
             In particular, create a mapping from each name to each other name it is
             connected to, along with a count of connections.
 
@@ -72,14 +81,19 @@ class PageRankBooks(object):
         words = list(filter(lambda w: len(w) > 1, words))
 
         # hunt through document, looking for names
-        max_index = len(words) - self.max_distance
+        max_index = len(words) - 1
         for i in range(max_index):
             if words[i] not in self.characters:
                 continue
             character = words[i]
-            for j in range(i, i + self.max_distance):
-                if words[j] in self.characters:
-                    self.ranks[name][words[j]] += 1
+            # find all connected names
+            for word in [words[i]: words[i + self.max_distance]]:
+                if word in self.characters:
+                    self.connections.[name][word] += 1
+
+    def page_rank(self):
+        ''' TODO '''
+        pass
 
 
 if __name__ == '__main__':
