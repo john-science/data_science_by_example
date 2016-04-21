@@ -16,11 +16,12 @@ class PageRankBooks(object):
         self.names_file = names_file
         self.book_files = book_files
         self.max_distance = max_distance
-        self.charachters = []
+        self.characters = []
         self.pseudonymns = {}
         self._read_names()
         self.connections = {}
         self._init_connections()
+        self.ranks = {}
 
     def _init_connections(self):
         ''' Initialize the characters connections with the present list
@@ -52,7 +53,7 @@ class PageRankBooks(object):
         ''' Just a helper method to find all the connections between characters
             in a book. Even if that book is broken into parts.
         '''
-        self.charachters = []
+        self.characters = []
         self.pseudonymns = {}
         for file_path in file_paths:
                 self._find_connections(file_path)
@@ -88,12 +89,24 @@ class PageRankBooks(object):
             character = words[i]
             # find all connected names
             for word in [words[i]: words[i + self.max_distance]]:
-                if word in self.characters:
+                if word in self.charactes:
                     self.connections.[name][word] += 1
 
     def page_rank(self):
-        ''' TODO '''
-        pass
+        ''' This will be an undamped PageRank, because I see no obvious
+            basis on which to calculate a damping factor.
+        '''
+        # initialize ranks
+        for name in self.characters:
+            self.ranks[name] = 0.0
+
+        num_nodes = len(self.characters)
+
+        # loop through all the connections to build the page ranks
+        for char1 in self.connections:
+            num_links = float(sum(self.connections[char1].values()))
+            for char2 in self.connections[char1]:
+                self.ranks[char2] += (self.connections[char1][char2] / num_links) / num_nodes
 
 
 if __name__ == '__main__':
