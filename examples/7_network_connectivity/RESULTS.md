@@ -10,8 +10,6 @@ NOTE: At the time of this writing there were only five of the expected seven boo
 
 ## Methods
 
-Before I get into the network analysis of the characters in these books, it is worth noting that each chapter in the books is told from the first-person persective of one of the characters. This is useful information, which we can also use to determine character centrality
-
 The network analysis of the characters in the Game of Thrones (A Song of Ice and Fire) series is caried out by parsing the text in all of the books.
 
 1. The books will be stripped down to only lower case letters with no punctuation.
@@ -21,5 +19,7 @@ The network analysis of the characters in the Game of Thrones (A Song of Ice and
 5. We may try several values of `X` to determine which returns more useful results.
 
 ## RESULTS
+
+Before getting into the network analysis, we have another clue to character centrality in these books. Each chapter is told in first-person perspective. You will find a quick tally of which characters have the most POV chapters [here](character_povs.ipynb).
 
 TODO
