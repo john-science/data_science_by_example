@@ -1,6 +1,6 @@
 # Network Analysis - Game of Thrones (ASOIAF)
 
-**WARNING! NUMERICAL SPOILERS AHEAD!**
+**WARNING! STATISTICAL SPOILERS AHEAD!**
 
 Network analysis is a big topic in software and in mathematics these days. Probably the most famous network analysis project is the Google search backend. But parsing the entire internet is probably not a great goal for a one-hour project. So let's take look at something a bit smaller.
 
