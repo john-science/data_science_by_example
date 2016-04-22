@@ -89,7 +89,7 @@ class PageRankBooks(object):
             character = words[i]
             # find all connected names
             for word in [words[i]: words[i + self.max_distance]]:
-                if word in self.charactes:
+                if word in self.charactes and word != name:
                     self.connections.[name][word] += 1
 
     def page_rank(self):
