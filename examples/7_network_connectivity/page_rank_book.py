@@ -8,6 +8,7 @@ DISTANCE = 15
 
 def main():
     pr = PageRankBooks(NAMES_FILE, BOOK_FILES, DISTANCE)
+    pr.find_connections()
 
 
 class PageRankBooks(object):
@@ -49,16 +50,16 @@ class PageRankBooks(object):
                 self.pseudonymns[name] = ln[1:]
         f.close()
 
-    def find_all_connections(self, file_paths):
-        ''' Just a helper method to find all the connections between characters
+    def find_connections(self):
+        ''' find all the connections between characters
             in a book. Even if that book is broken into parts.
         '''
         self.characters = []
         self.pseudonymns = {}
-        for file_path in file_paths:
-                self._find_connections(file_path)
+        for file_path in self.book_files:
+                self._find_connections_1_file(file_path)
 
-    def _find_connections(self, file_path):
+    def _find_connections_1_file(self, file_path):
         ''' Parse a single input file, creating the basic network connections
             between the characters of a book.
             In particular, create a mapping from each name to each other name it is
