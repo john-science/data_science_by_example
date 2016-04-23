@@ -25,7 +25,7 @@ daenerys:mother of dragon,dany,mhysa,breaker of chains,stormborn
 davos:davos seaworth,onion knight
 dondarrion:beric dondarrion,beric
 doran:doran martell,prince of dorne
-drogo:khal drog,sun and stars
+drogo:khal drogo,sun and stars
 duncan
 dunsen
 eddard:ned
@@ -38,7 +38,7 @@ euron
 gendry
 giantsbane:tormund giantsbane,tormunc
 gilly
-gregor:the mountain
+gregor:the mountain that rides,the mountain,gregor clegane
 greyworm:grey worm
 hizdahr
 hodor:hodor hodor hodor,hodor hodor
@@ -67,6 +67,7 @@ lyanna
 lyarra
 lysa
 mace_tyrell:mace tyrell
+mago
 mance
 margaery
 meera
@@ -82,6 +83,7 @@ podrick:pod
 polliver
 poole:jeyne poole
 pycelle
+qhorin:qhorin halfhand,halfhand
 quentyn
 qyburn
 raff:raff the sweetling
@@ -99,13 +101,15 @@ robert:king robert baratheon,king robert,robert baratheon,robert baratheon
 roose
 rorge
 samwell:sam
-sandor:hound
+sandor:the hound,sandor clegane
 sansa:sansa stark
 selmy:barristan selmy,barristan the bold,barristan
 selwyn:selwyn tarth
 selyse
+shaggydog
 shireen
 stannis
+steelshanks
 sweetrobin:robert arryn
 syrio:syrio forel
 theon
@@ -115,6 +119,7 @@ tommen
 trystane
 tycho
 tyrion:imp,halfman:kinslayer
+tysha
 tytos:tytos lannister
 tywin:tywin lannister
 unella
@@ -126,6 +131,7 @@ walda_frey:walda frey
 walder_frey:walder frey
 walton_frey:walton frey
 weese
+yara
 yezzan
 ygritte
 yohn
