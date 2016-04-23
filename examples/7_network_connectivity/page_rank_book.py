@@ -11,22 +11,19 @@ OUT_PLOT = 'GoT_network.png'
 
 
 def main():
-    pr = PageRankBooks(NAMES_FILE, BOOK_FILES, DISTANCE)
+    pr = PageRankBooks(NAMES_FILE, BOOK_FILES, DISTANCE, OUT_PLOT)
     pr.find_connections()
     pr.page_rank()
-
-    # A quick test that the parsing worked correctly
-    from pprint import pprint
-    pprint(pr.connections['arya'])
-    pprint(pr.ranks['arya'])
+    pr.plot_network()
 
 
 class PageRankBooks(object):
 
-    def __init__(self, names_file, book_files, max_distance):
+    def __init__(self, names_file, book_files, max_distance, plot_path):
         self.names_file = names_file
         self.book_files = book_files
         self.max_distance = max_distance
+        self.plot_path = plot_path
         self.characters = []
         self.pseudonymns = {}
         self._read_names()
@@ -118,30 +115,29 @@ class PageRankBooks(object):
             for char2 in self.connections[char1]:
                 self.ranks[char2] += (self.connections[char1][char2] / num_links) / num_nodes
 
+    def plot_network(self):
+        ''' Make a plot of the interconnections between the characters as a network.
+
+            Node Size: relative PageRank network centrality of the character
+            Edge Size: strength of connection between the two characters
+        '''
+        # TODO: THIS IS PLACEHOLDER PLOTTING LOGIC
+        G = nx.Graph()
+        G.add_edge('Arya', 'Jon', color='b', weight=6)
+        G.add_edge('Jon', 'Catelyn', color='b', weight=4)
+        G.add_edge('Catelyn', 'Tyrion', color='b', weight=1)
+
+        pos = nx.circular_layout(G)
+
+        edges = G.edges()
+        colors = [G[u][v]['color'] for u,v in edges]
+        weights = [G[u][v]['weight'] for u,v in edges]
+        node_sizes = [480, 400, 320, 480]
+
+        nx.draw(G, pos, edges=edges, edge_color=colors, width=weights, with_labels=True,
+                node_size=node_sizes)
+        plt.savefig(self.plot_path)
+
 
 if __name__ == '__main__':
     main()
-
-
-"""
-Testing the NetworkX plotting library:
-
-import matplotlib.pyplot as plt
-import networkx as nx
-
-G = nx.Graph()
-G.add_edge('Arya', 'Jon', color='r', weight=6)
-G.add_edge('Jon', 'Catelyn', color='b', weight=4)
-G.add_edge('Catelyn', 'Tyrion', color='g', weight=1)
-
-pos = nx.circular_layout(G)
-
-edges = G.edges()
-colors = [G[u][v]['color'] for u,v in edges]
-weights = [G[u][v]['weight'] for u,v in edges]
-node_sizes = [480, 400, 320, 480]
-
-nx.draw(G, pos, edges=edges, edge_color=colors, width=weights, with_labels=True,
-        node_size=node_sizes)
-plt.savefig("networkx_testing.png")
-"""
