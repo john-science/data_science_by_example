@@ -1,14 +1,24 @@
 
+from collections import defaultdict
 from glob import glob
+import matplotlib.pyplot as plt
+import networkx as nx
 
-NAMES_FILE = 'game_of_thrones_pseudonymns.txt'
 BOOK_FILES = glob('data/book_1/txt/chapter*.txt')
 DISTANCE = 15
+NAMES_FILE = 'game_of_thrones_pseudonymns.txt'
+OUT_PLOT = 'GoT_network.png'
 
 
 def main():
     pr = PageRankBooks(NAMES_FILE, BOOK_FILES, DISTANCE)
     pr.find_connections()
+    pr.page_rank()
+
+    # A quick test that the parsing worked correctly
+    from pprint import pprint
+    pprint(pr.connections['arya'])
+    pprint(pr.ranks['arya'])
 
 
 class PageRankBooks(object):
@@ -54,8 +64,6 @@ class PageRankBooks(object):
         ''' find all the connections between characters
             in a book. Even if that book is broken into parts.
         '''
-        self.characters = []
-        self.pseudonymns = {}
         for file_path in self.book_files:
                 self._find_connections_1_file(file_path)
 
@@ -89,9 +97,10 @@ class PageRankBooks(object):
                 continue
             character = words[i]
             # find all connected names
-            for word in [words[i]: words[i + self.max_distance]]:
-                if word in self.charactes and word != name:
-                    self.connections.[name][word] += 1
+            for word in words[i: i + self.max_distance]:
+                if word in self.characters and word != character:
+                    self.connections[character][word] += 1
+                    self.connections[word][character] += 1
 
     def page_rank(self):
         ''' This will be an undamped PageRank, because I see no obvious
