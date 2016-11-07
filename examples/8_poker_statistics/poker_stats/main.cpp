@@ -1,14 +1,16 @@
 
+#include <algorithm>
 #include <iostream>
 #include <random>
 #include "random_seed.h"
 #include "nouns.h"
+#include "heapsort_hand.h"
 
 using namespace std;
 
 
 // TODO: Build a Hands of cards (just an array of Cards)
-// TODO: Determine the value of a hand
+// TODO: Determine the score/rank of a hand
 /**
  * Hands:
  * high card
@@ -39,10 +41,14 @@ int main() {
     int cards_per_hands(5);
     int num_hands(1);
 
-    // draw!
-    int* hand = floyds_algorithm(cards_per_deck * num_decks, cards_per_hands * num_hands);
-    cout << hand[0] << " " << hand[1] << " " << hand[2] << " " << hand[3] << " " << hand[4] << endl;
     // create a single deck of cards
     Deck deck = Deck(1);
     cout << deck[0] << "   " << deck[1] << "   " << deck[2] << endl;
+
+    // make a hand out of the first five cards in the deck
+    Hand hand = Hand(&deck[0], 5);
+    cout << hand.cards[0] << "   " << hand.cards[1] << "   " << hand.cards[2] << "   " << hand.cards[3] << "   " << hand.cards[4] << "   " << hand.cards[5] << "   " << hand.cards[6] << endl;
+
+    sort(hand.cards, hand.cards + 5);
+    cout << hand.cards[0] << "   " << hand.cards[1] << "   " << hand.cards[2] << "   " << hand.cards[3] << "   " << hand.cards[4] << "   " << hand.cards[5] << "   " << hand.cards[6] << endl;
 }

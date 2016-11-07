@@ -21,10 +21,34 @@ public:
     int set_value(const int v);
     int get_suit();
     int set_suit(const int s);
-    friend std::ostream& operator<<(std::ostream &os, const Card& card);
+    friend std::ostream& operator<< (std::ostream &os, const Card& card);
+    //friend bool operator< (Card const &c1, Card const &c2);
+    //friend bool operator> (Card const &c1, Card const &c2);
+    /**
+    bool operator< (const Card &c2) const {
+        return value < c2.get_value();
+    }
+    */
+
+    friend bool operator< (const Card &c1, const Card &c2) {
+        return c1.get_value() < c2.get_value();
+    }
 private:
     int value;
     int suit;
+};
+
+
+class Hand {
+public:
+    Hand();
+    Hand(Card*, int);
+    int get_score();
+    void set_score(int);
+    Card *cards;  // TODO: move to private by creating the [] operator
+private:
+    int num_cards;
+    int score;
 };
 
 
@@ -39,6 +63,9 @@ private:
     int num_cards;
     Card *cards;
 };
+
+bool operator< (Card &c1, const Card &c2);
+bool operator> (Card &c1, const Card &c2);
 
 
 #endif

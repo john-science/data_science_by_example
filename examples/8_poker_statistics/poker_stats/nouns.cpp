@@ -9,25 +9,6 @@ using namespace std;
 
 
 /**
- *  Generate a totally random Card.
- *  (This is called when initializing an array of Cards.)
- */
-Card::Card() {
-    set_value(randint(num_values));
-    set_suit(randint(num_suits));
-}
-
-
-/**
- *  Define a specific Card.
- */
-Card::Card(const int v, const int s) {
-    set_value(v);
-    set_suit(s);
-}
-
-
-/**
  * Overriding cout operator to print a Card
  */
 ostream& operator<< (ostream &os, const Card &card) {
@@ -36,9 +17,22 @@ ostream& operator<< (ostream &os, const Card &card) {
 }
 
 /**
+// http://fusharblog.com/3-ways-to-define-comparison-functions-in-cpp/
+bool operator< (Card &c1, const Card &c2) {
+    return c1.get_value() < c2.get_value();
+}
+
+
+bool operator> (Card &c1, const Card &c2) {
+    return c1.get_value() > c2.get_value();
+}
+*/
+
+
+/**
  * Getter for face-value or number of a Card.
  */
-int Card::get_value() {
+int Card::get_value() {   // TODO: Should this be const?
     return value;
 }
 
@@ -74,6 +68,46 @@ int Card::set_suit(const int s) {
     }
 }
 
+
+/**
+ *  Generate a totally random Card.
+ *  (This is called when initializing an array of Cards.)
+ */
+Card::Card() {
+    set_value(randint(num_values));
+    set_suit(randint(num_suits));
+}
+
+
+/**
+ *  Define a specific Card.
+ */
+Card::Card(const int v, const int s) {
+    set_value(v);
+    set_suit(s);
+}
+
+
+int Hand::get_score() {
+    return score;
+}
+
+
+void Hand::set_score(int s) {
+    score = s;
+}
+
+
+Hand::Hand() {
+    num_cards = 0;
+    score = 0;
+}
+
+
+Hand::Hand(Card *in_cards, int num_cards) {
+    cards = in_cards;
+    num_cards = num_cards;
+}
 
 /**
  *  Get a specific card using the index operator.
