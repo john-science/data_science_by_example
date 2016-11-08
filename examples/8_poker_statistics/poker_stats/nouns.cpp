@@ -138,8 +138,10 @@ Hand::Hand() {
 
 
 Hand::Hand(Card *in_cards, int num_cards) {
-    cards = in_cards;
     num_cards = num_cards;
+    score = 0;
+    cards = in_cards;
+    sort(cards, cards + num_cards);
 }
 
 /**
