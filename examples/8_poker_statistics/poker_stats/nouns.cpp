@@ -18,57 +18,36 @@ ostream& operator<< (ostream &os, const Card &card) {
 
 
 bool operator> (Card &c1, const Card &c2)
-{
-    return c1.value > c2.value;
-}
-
+{    return c1.value > c2.value;    }
 
 bool operator< (Card &c1, const Card &c2)
-{
-    return c1.value < c2.value;
-}
-
+{    return c1.value < c2.value;    }
 
 bool operator> (const Card &c1, const Card &c2)
-{
-    return c1.value > c2.value;
-}
-
+{    return c1.value > c2.value;    }
 
 bool operator< (const Card &c1, const Card &c2)
-{
-    return c1.value < c2.value;
-}
-
+{    return c1.value < c2.value;    }
 
 bool operator>= (const Card &c1, const Card &c2)
-{
-    return c1.value >= c2.value;
-}
-
+{    return c1.value >= c2.value;   }
 
 bool operator<= (const Card &c1, const Card &c2)
-{
-    return c1.value <= c2.value;
-}
+{    return c1.value <= c2.value;   }
 
 
 bool operator== (const Card &c1, const Card &c2)
-{
-    return c1.value == c2.value;
-}
+{    return c1.value == c2.value;   }
 
 
 bool operator!= (const Card &c1, const Card &c2)
-{
-    return c1.value != c2.value;
-}
+{    return c1.value != c2.value;   }
 
 
 /**
  * Getter for face-value or number of a Card.
  */
-int Card::get_value() {   // TODO: Should this be const?
+int Card::get_value() const {
     return value;
 }
 
@@ -88,7 +67,7 @@ int Card::set_value(const int v) {
 /**
  *  Get the suit of the Card.
  */
-int Card::get_suit() {
+int Card::get_suit() const {
     return suit;
 };
 
@@ -124,13 +103,31 @@ Card::Card(const int v, const int s) {
 }
 
 
-int Hand::get_score() {
+int Hand::get_score() const {
     return score;
 }
 
 
 void Hand::set_score(int s) {
     score = s;
+}
+
+
+/**
+ *  Get a specific card using the index operator.
+ */
+Card& Hand::operator[] (const int index)
+{
+    return cards[index];
+}
+
+
+/**
+ *  constant versino of the index operator
+ */
+const Card& Hand::operator[] (const int index) const
+{
+    return cards[index];
 }
 
 

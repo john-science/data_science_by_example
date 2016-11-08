@@ -4,7 +4,6 @@
 #include <random>
 #include "random_seed.h"
 #include "nouns.h"
-#include "heapsort_hand.h"
 
 using namespace std;
 
@@ -47,8 +46,7 @@ int main() {
 
     // make a hand out of the first five cards in the deck
     Hand hand = Hand(&deck[0], 5);
-    cout << hand.cards[0] << "   " << hand.cards[1] << "   " << hand.cards[2] << "   " << hand.cards[3] << "   " << hand.cards[4] << "   " << hand.cards[5] << "   " << hand.cards[6] << endl;
-
-    sort(hand.cards, hand.cards + 5);
-    cout << hand.cards[0] << "   " << hand.cards[1] << "   " << hand.cards[2] << "   " << hand.cards[3] << "   " << hand.cards[4] << "   " << hand.cards[5] << "   " << hand.cards[6] << endl;
+    cout << hand[0] << "   " << hand[1] << "   " << hand[2] << "   " << hand[3] << "   " << hand[4] << "   " << hand[5] << "   " << hand[6] << endl;
+    sort(&hand[0], &hand[0] + 5);
+    cout << hand[0] << "   " << hand[1] << "   " << hand[2] << "   " << hand[3] << "   " << hand[4] << "   " << hand[5] << "   " << hand[6] << endl;
 }

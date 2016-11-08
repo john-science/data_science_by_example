@@ -17,9 +17,9 @@ class Card {
 public:
     Card();
     Card(const int v, const int s);
-    int get_value();
+    int get_value() const;
     int set_value(const int v);
-    int get_suit();
+    int get_suit() const;
     int set_suit(const int s);
     friend std::ostream& operator<< (std::ostream &os, const Card& card);
     friend bool operator> (Card &c1, const Card &c2);
@@ -40,10 +40,12 @@ class Hand {
 public:
     Hand();
     Hand(Card*, int);
-    int get_score();
+    int get_score() const;
     void set_score(int);
-    Card *cards;  // TODO: move to private by creating the [] operator
+    Card& operator[] (const int index);
+    const Card& operator[] (const int index) const;
 private:
+    Card *cards;
     int num_cards;
     int score;
 };
@@ -60,9 +62,6 @@ private:
     int num_cards;
     Card *cards;
 };
-
-bool operator< (Card &c1, const Card &c2);
-bool operator> (Card &c1, const Card &c2);
 
 
 #endif
