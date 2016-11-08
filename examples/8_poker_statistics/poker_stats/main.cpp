@@ -11,11 +11,11 @@ using namespace std;
  * Hand                 Score
  * high card            0-12
  * pair                 1000-1012
- * two pair             2000-2012  # TODO: Not just high card
+ * two pair             2000-2012
  * three of a kind      3000-3012
  * staight              4003-4012
  * flush                5004-5012
- * full house           6000-6012  # TODO: Not accounting for tie breakers
+ * full house           6000-6012
  * four of a kind       7000-7012
  * straight flush       8003-8012
  * royal flush          8012
@@ -44,7 +44,7 @@ int score_5card_draw(Hand hand) {
     int val(-999);
     int count(0);
     for (int i=0; i < 6; ++i) {
-        if (i < 5 || hand[i].get_value() == val) {
+        if (i < 5 && hand[i].get_value() == val) {
             count += 1;
         } else {
             if (count < 2) {
@@ -53,7 +53,7 @@ int score_5card_draw(Hand hand) {
                 }
             } else if (count == 2) {
                 if (!has_one_pair) {
-                    has_one_pair = true;            // TODO: Complete failure for one pair!
+                    has_one_pair = true;
                     high_pair = val;
                 } else {
                     has_one_pair = false;
