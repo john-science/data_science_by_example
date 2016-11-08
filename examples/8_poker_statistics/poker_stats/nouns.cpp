@@ -16,17 +16,53 @@ ostream& operator<< (ostream &os, const Card &card) {
     return os;
 }
 
-/**
-// http://fusharblog.com/3-ways-to-define-comparison-functions-in-cpp/
-bool operator< (Card &c1, const Card &c2) {
-    return c1.get_value() < c2.get_value();
+
+bool operator> (Card &c1, const Card &c2)
+{
+    return c1.value > c2.value;
 }
 
 
-bool operator> (Card &c1, const Card &c2) {
-    return c1.get_value() > c2.get_value();
+bool operator< (Card &c1, const Card &c2)
+{
+    return c1.value < c2.value;
 }
-*/
+
+
+bool operator> (const Card &c1, const Card &c2)
+{
+    return c1.value > c2.value;
+}
+
+
+bool operator< (const Card &c1, const Card &c2)
+{
+    return c1.value < c2.value;
+}
+
+
+bool operator>= (const Card &c1, const Card &c2)
+{
+    return c1.value >= c2.value;
+}
+
+
+bool operator<= (const Card &c1, const Card &c2)
+{
+    return c1.value <= c2.value;
+}
+
+
+bool operator== (const Card &c1, const Card &c2)
+{
+    return c1.value == c2.value;
+}
+
+
+bool operator!= (const Card &c1, const Card &c2)
+{
+    return c1.value != c2.value;
+}
 
 
 /**

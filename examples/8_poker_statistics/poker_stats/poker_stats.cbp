@@ -32,7 +32,13 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="heapsort_hand.cpp" />
+		<Unit filename="heapsort_hand.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="nouns.cpp" />
+		<Unit filename="nouns.h" />
+		<Unit filename="random_seed.cpp" />
+		<Unit filename="random_seed.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
