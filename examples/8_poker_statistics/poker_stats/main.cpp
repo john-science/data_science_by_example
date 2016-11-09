@@ -140,7 +140,7 @@ int main() {
     Deck deck = Deck(1);
 
     // make a hand out of the first five cards in the deck
-    for (int i=0; i < 25; i += 5) {
+    for (int i=0; i < 45; i += 5) {
         Hand hand = Hand(&deck[i], 5);
         cout << hand[0] << "   " << hand[1] << "   " << hand[2] << "   " << hand[3] << "   " << hand[4] << endl;
         cout << score_5card_draw(hand) << endl << endl;
