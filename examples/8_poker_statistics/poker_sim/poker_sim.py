@@ -3,24 +3,24 @@ import itertools
 from random import shuffle
 
 """
-Hand                 Score
-high card             0604030201 -  1312111008
-pair                 10000000000 - 11312111000
-two pair             20000000000 - 21312110000
-three of a kind      30000000000 - 31300000000
-staight              40000000000 - 41300000000
-flush                50000000000 - 51312111008
-full house           60000000000 - 61312000000
-four of a kind       70000000000 - 71300000000
-straight flush       80000000000 - 81300000000
-royal flush          81300000000
+Hand             Score
+high card         0604030201 -  1312111008
+pair             10000000000 - 11312111000
+two pair         20000000000 - 21312110000
+three of a kind  30000000000 - 31300000000
+staight          40000000000 - 41300000000
+flush            50000000000 - 51312111008
+full house       60000000000 - 61312000000
+four of a kind   70000000000 - 71300000000
+straight flush   80000000000 - 81300000000
+royal flush      81300000000
 
 Notes:
-High card matters, but suit doesn't.
-You split the pot, if you have the exact same hand in different suits.
-Ace can be low or high, for straights... but you can't wrap around.
-If both players have 3-of-a-kind, the value of the 3, not the two, breaks the tie.
-There are extra rules of you're playing Hold 'em, and there are cards on the table.
+* High card matters, but suit doesn't.
+* You split the pot, if you have the exact same hand in different suits.
+* Ace can be low or high, for straights; but you can't wrap around.
+* If both players have 3-of-a-kind, the value of the 3, not the two, breaks the tie.
+* There are extra rules of you're playing Hold 'em, and there are cards on the table.
 
 Tie Breakers:
 http://www.pokerhands.com/poker_hand_tie_rules.html
@@ -37,16 +37,53 @@ PERMS_7CARD = list(itertools.combinations(range(7), 5))
 
 
 def main():
-    play_5card_stud()
+    # various human-readable tests
+    #scoring_unit_test()
+    #sim_5card_stud_human()
+
+    # final simulations
+    file_out = "sim_poker_5card_stud_20170111.csv"
+    num_decks = 10000
+    sim_5card_stud_csv(file_out, num_decks)
 
 
-def play_5card_stud():
-    ''' simulate a game of 5-card stud, with 4 players,
+def sim_5card_stud_csv(file_out, num_decks):
+    ''' Simulate many games of 5-card stud, with 4 players,
+        going each the deck once.
+        Write the results to an output file.
+    '''
+    f = open(file_out, 'w')
+    f.write('success state,score,card1,card2,card3,card4,card5\n')
+    for _ in xrange(num_decks):
+        deck = Deck()
+        for game in xrange(2):
+            hands = []
+            scores = []
+            for player in xrange(4):
+                start = (game * 5 * 4) + (player * 5)
+                hand = Hand(deck.cards[start: start + 5])
+                hands.append(hand)
+                scores.append(hand.score)
+
+            max_score = max(scores)
+            is_draw = scores.count(max_score) > 1
+            win_val = "WON ," if not is_draw else "DRAW,"
+            for player in xrange(4):
+                if scores[player] == max_score:
+                    f.write(win_val + str(scores[player]) + "," + hands[player].to_csv() + '\n')
+                else:
+                    f.write("LOST," + str(scores[player]) + "," + hands[player].to_csv() + '\n')
+    f.close()
+
+
+def sim_5card_stud_human():
+    ''' Simulate a game of 5-card stud, with 4 players,
         going through the deck once.
+        Print the results in a human-readable format.
     '''
     deck = Deck()
     for game in xrange(2):
-        print('\n============GAME===============\n')
+        print('# GAME')
         hands = []
         scores = []
         for player in xrange(4):
@@ -249,10 +286,14 @@ class Hand(object):
             vals[1] *= 1e6
             vals[2] *= 1e4
             vals[3] *= 1e2
-            vals[4] *= 1e2
             score = int(sum(vals))
 
         return score
+
+    def to_csv(self):
+        ''' custom to_string method, for CSV output
+        '''
+        return ','.join(str(c[0] + NUM_VALUES * c[1]) for c in sorted(self.cards))
 
     def __str__(self):
         return ' '.join(card_to_string(card) for card in sorted(self.cards))
