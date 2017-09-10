@@ -4,7 +4,7 @@ This introduction is simply a read-through of the [Python Data Science Handbook]
 
 I will cover each section in a different Jupyter notebook:
 
-* Hyperparameters and Model Validation
+* [Hyperparameters and Model Validation](1_model_validation.ipynb)
 * Feature Engineering
 * In Depth: Naive Bayes Classification
 * In Depth: Linear Regression
